@@ -1,7 +1,8 @@
 package com.challenge.Bank.service;
 
-import com.challenge.Bank.DTO.StatisticsDTO;
-import com.challenge.Bank.DTO.TransactionDTO;
+import com.challenge.Bank.DTO.response.StatisticsResponseDTO;
+import com.challenge.Bank.DTO.response.TransactionResponseDTO;
+import com.challenge.Bank.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class StatisticsService {
         this.transactionService = transactionService;
     }
 
-    public StatisticsDTO calcularStatistics(Integer TimeSearch) {
+    public StatisticsResponseDTO calcularStatistics(Integer TimeSearch) {
         log.info("Extract Statistics");
 
         long start = System.currentTimeMillis();
@@ -26,17 +27,17 @@ public class StatisticsService {
         var transactions = transactionService.getTransactionByTime(TimeSearch);
 
         if (transactions.isEmpty()) {
-            return new StatisticsDTO();
+            return new StatisticsResponseDTO();
         }
 
         DoubleSummaryStatistics statisticsTransactions = transactions.stream()
-                .mapToDouble(TransactionDTO::getValor).summaryStatistics();
+                .mapToDouble(Transaction::getValor).summaryStatistics();
 
         long end = System.currentTimeMillis();
         long timeRequest = end - start;
         log.info("Extract Statistics Time: {}", timeRequest);
 
-        return new StatisticsDTO(
+        return new StatisticsResponseDTO(
                 statisticsTransactions.getCount(),
                 statisticsTransactions.getSum(),
                 statisticsTransactions.getAverage(),

@@ -1,8 +1,8 @@
-package com.challenge.Bank.DTO;
+package com.challenge.Bank.DTO.response;
 
 import java.util.Objects;
 
-public class StatisticsDTO {
+public class StatisticsResponseDTO {
 
     private Long count;
     private Double sum;
@@ -10,9 +10,9 @@ public class StatisticsDTO {
     private Double min;
     private Double max;
 
-    public StatisticsDTO() {
+    public StatisticsResponseDTO() {
     }
-    public StatisticsDTO(Long count, Double sum, Double avg, Double min, Double max) {
+    public StatisticsResponseDTO(Long count, Double sum, Double avg, Double min, Double max) {
         this.count = count;
         this.sum = sum;
         this.avg = avg;
@@ -63,7 +63,7 @@ public class StatisticsDTO {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        StatisticsDTO that = (StatisticsDTO) o;
+        StatisticsResponseDTO that = (StatisticsResponseDTO) o;
         return Objects.equals(getCount(), that.getCount()) && Objects.equals(getSum(), that.getSum()) && Objects.equals(getAvg(), that.getAvg()) && Objects.equals(getMin(), that.getMin()) && Objects.equals(getMax(), that.getMax());
     }
 

@@ -1,14 +1,14 @@
 package com.challenge.Bank.repository;
 
-import com.challenge.Bank.DTO.TransactionDTO;
+import com.challenge.Bank.model.Transaction;
 
 import java.util.List;
 
 public interface TransactionRepository {
 
-    List<TransactionDTO> findAll(Integer timeSearch);
+    List<Transaction> findAll(Integer timeSearch);
 
-    TransactionDTO save(TransactionDTO transactionDTO);
+    Transaction save(Transaction transaction);
 
     void delete(Long id);
 

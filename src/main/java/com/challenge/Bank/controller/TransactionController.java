@@ -1,6 +1,7 @@
 package com.challenge.Bank.controller;
 
-import com.challenge.Bank.DTO.TransactionDTO;
+import com.challenge.Bank.DTO.request.TransactionRequestDTO;
+import com.challenge.Bank.DTO.response.TransactionResponseDTO;
 import com.challenge.Bank.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/transacao")
+@RequestMapping("api/transacao/v1")
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -34,10 +35,10 @@ public class TransactionController {
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content)
             }
     )
-    public ResponseEntity<TransactionDTO> save(@RequestBody TransactionDTO transactionDTO) {
-        var saved = transactionService.save(transactionDTO);
+    public ResponseEntity<TransactionResponseDTO> save(@RequestBody TransactionRequestDTO transactionRequestDTO) {
+        var saved = transactionService.save(transactionRequestDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @DeleteMapping(value = "/{id}")

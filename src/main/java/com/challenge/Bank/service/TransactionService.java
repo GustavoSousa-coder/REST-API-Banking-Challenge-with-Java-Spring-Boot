@@ -1,8 +1,11 @@
 package com.challenge.Bank.service;
 
-import com.challenge.Bank.DTO.TransactionDTO;
+import com.challenge.Bank.DTO.request.TransactionRequestDTO;
+import com.challenge.Bank.DTO.response.TransactionResponseDTO;
 import com.challenge.Bank.exceptions.BadRequest;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
+import com.challenge.Bank.mappers.TransactionMapper;
+import com.challenge.Bank.model.Transaction;
 import com.challenge.Bank.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +22,28 @@ public class TransactionService {
     private final Logger log =  LoggerFactory.getLogger(TransactionService.class);
 
     private final TransactionRepository transactionRepository;
+    private final TransactionMapper  transactionMapper;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
+        this.transactionMapper = transactionMapper;
     }
 
-    public TransactionDTO save(TransactionDTO transactionDTO) {
+    public TransactionResponseDTO save(TransactionRequestDTO transactionRequestDTO) {
         log.info("Saving transaction");
 
-        var dataHora = transactionDTO.getDataHora();
-        var valor = transactionDTO.getValor();
+        TransactionResponseDTO transactionResponseDTO = new TransactionResponseDTO();
+        var dataHora = transactionResponseDTO.getDataHora();
 
-        if (!dataHora.isBefore(now())) {
-            throw new UnprocessableEntity("Error relational in dataHora");
-        }
-        if (valor == null || valor < 0) {
-            throw new BadRequest("Error relational in value is negative");
-        }
+        var valor = transactionRequestDTO.getValor();
 
-        return transactionRepository.save(transactionDTO);
+        if (dataHora.isAfter(now())) { throw new UnprocessableEntity("Error relational in dataHora"); }
+        if (valor == null || valor < 0) { throw new BadRequest("Error relational in value is negative"); }
+
+        var entity = transactionMapper.toEntity(transactionRequestDTO);
+        var saved = transactionRepository.save(entity);
+
+        return transactionMapper.toDTO(saved);
     }
 
     public void delete(Long id) {
@@ -45,7 +51,7 @@ public class TransactionService {
         transactionRepository.delete(id);
     }
 
-    public List<TransactionDTO> getTransactionByTime(Integer TimeSearch) {
+    public List<Transaction> getTransactionByTime(Integer TimeSearch) {
         log.info("Getting transaction by time");
 
         OffsetDateTime dataHoraTimeSearch = OffsetDateTime.now().minusSeconds(TimeSearch);

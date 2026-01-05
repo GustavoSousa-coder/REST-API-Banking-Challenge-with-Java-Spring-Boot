@@ -1,6 +1,6 @@
 package com.challenge.Bank.controller;
 
-import com.challenge.Bank.DTO.StatisticsDTO;
+import com.challenge.Bank.DTO.response.StatisticsResponseDTO;
 import com.challenge.Bank.service.StatisticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/estatistica")
+@RequestMapping("api/estatistica/v1")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
@@ -32,11 +32,9 @@ public class StatisticsController {
                     @ApiResponse(description = "ok", responseCode = "200", content = @Content),
             }
     )
-    public ResponseEntity<StatisticsDTO> constructorStatistics(
+    public ResponseEntity<StatisticsResponseDTO> constructorStatistics(
             @RequestParam(value = "TimeSearch", required = false, defaultValue = "60") Integer TimeSearch) {
-        return ResponseEntity.ok(
-                statisticsService.calcularStatistics(TimeSearch)
-        );
+        return ResponseEntity.ok(statisticsService.calcularStatistics(TimeSearch));
     }
 
 }

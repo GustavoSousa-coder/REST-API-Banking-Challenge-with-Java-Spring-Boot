@@ -1,12 +1,11 @@
-package com.challenge.Bank.DTO;
+package com.challenge.Bank.model;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-
-public class TransactionDTO implements Serializable {
+public class Transaction implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -14,9 +13,9 @@ public class TransactionDTO implements Serializable {
     private Double valor;
     private OffsetDateTime dataHora =  OffsetDateTime.now();
 
-    public TransactionDTO() {
+    public Transaction() {
     }
-    public TransactionDTO(Long id, Double valor, OffsetDateTime dataHora) {
+    public Transaction(Long id, Double valor, OffsetDateTime dataHora) {
         this.id = id;
         this.valor = valor;
         this.dataHora = dataHora;
@@ -49,21 +48,12 @@ public class TransactionDTO implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        TransactionDTO that = (TransactionDTO) o;
+        Transaction that = (Transaction) o;
         return Objects.equals(getId(), that.getId()) && Objects.equals(getValor(), that.getValor()) && Objects.equals(getDataHora(), that.getDataHora());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getValor(), getDataHora());
-    }
-
-    @Override
-    public String toString() {
-        return "TransactionDTO{" +
-                "id=" + id +
-                ", valor=" + valor +
-                ", dataHora=" + dataHora +
-                '}';
     }
 }
