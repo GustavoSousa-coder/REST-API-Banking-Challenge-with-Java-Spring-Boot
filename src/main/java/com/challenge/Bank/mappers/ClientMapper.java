@@ -22,12 +22,9 @@ public class ClientMapper {
         ClientResponseDTO dto = new ClientResponseDTO();
         dto.setId(client.getId());
         dto.setName(client.getName());
-        dto.setCpf(client.getCpf());
         dto.setDateOfBirth(client.getDateOfBirth());
         dto.setEmail(client.getEmail());
         dto.setAccountStatus(client.getAccountStatus());
-        dto.setCurrentBalance(client.getCurrentBalance());
-        dto.setPassword(client.getPassword());
         return dto;
     }
 

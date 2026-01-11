@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class RepositoryInMemory implements TransactionRepository {
+public class TransactionRepositoryInMemory implements TransactionRepository {
 
     private final Map<Long, Transaction> map = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong(1);

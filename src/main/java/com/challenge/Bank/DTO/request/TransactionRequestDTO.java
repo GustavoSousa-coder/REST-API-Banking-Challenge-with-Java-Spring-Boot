@@ -1,19 +1,20 @@
 package com.challenge.Bank.DTO.request;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class TransactionRequestDTO {
 
-    private Double valor;
+    private BigDecimal valor;
 
     public TransactionRequestDTO() {}
-    public TransactionRequestDTO(Double valor) {
+    public TransactionRequestDTO(BigDecimal valor) {
         this.valor = valor;
     }
 
-    public Double getValor() {return valor;}
+    public BigDecimal getValor() {return valor;}
 
-    public void setValor(Double valor) {this.valor = valor;}
+    public void setValor(BigDecimal valor) {this.valor = valor;}
 
     @Override
     public boolean equals(Object o) {

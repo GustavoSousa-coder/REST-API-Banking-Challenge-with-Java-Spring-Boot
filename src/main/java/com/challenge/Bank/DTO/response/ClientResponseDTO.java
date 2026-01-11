@@ -1,38 +1,29 @@
 package com.challenge.Bank.DTO.response;
 
-import com.challenge.Bank.model.status.Status;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.challenge.Bank.model.Enums.Status;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class ClientResponseDTO implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     private Long id;
     private String name;
-    private Long cpf;
     private LocalDate dateOfBirth;
     private String email;
     private Status accountStatus;
-    private BigDecimal currentBalance;
-    private String password;
 
     public ClientResponseDTO() {
     }
-    public ClientResponseDTO(Long id, String name, Long cpf, LocalDate dateOfBirth, String email, Status accountStatus, BigDecimal currentBalance, String password) {
+    public ClientResponseDTO(Long id, String name, LocalDate dateOfBirth, String email, Status accountStatus) {
         this.id = id;
         this.name = name;
-        this.cpf = cpf;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.accountStatus = accountStatus;
-        this.currentBalance = currentBalance;
-        this.password = password;
     }
 
     public Long getId() {
@@ -49,14 +40,6 @@ public class ClientResponseDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(Long cpf) {
-        this.cpf = cpf;
     }
 
     public LocalDate getDateOfBirth() {
@@ -83,31 +66,15 @@ public class ClientResponseDTO implements Serializable {
         this.accountStatus = accountStatus;
     }
 
-    public BigDecimal getCurrentBalance() {
-        return currentBalance;
-    }
-
-    public void setCurrentBalance(BigDecimal currentBalance) {
-        this.currentBalance = currentBalance;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ClientResponseDTO that = (ClientResponseDTO) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName()) && Objects.equals(getCpf(), that.getCpf()) && Objects.equals(getDateOfBirth(), that.getDateOfBirth()) && Objects.equals(getEmail(), that.getEmail()) && getAccountStatus() == that.getAccountStatus() && Objects.equals(getCurrentBalance(), that.getCurrentBalance()) && Objects.equals(getPassword(), that.getPassword());
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName()) && Objects.equals(getDateOfBirth(), that.getDateOfBirth()) && Objects.equals(getEmail(), that.getEmail()) && getAccountStatus() == that.getAccountStatus();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCpf(), getDateOfBirth(), getEmail(), getAccountStatus(), getCurrentBalance(), getPassword());
+        return Objects.hash(getId(), getName(), getDateOfBirth(), getEmail(), getAccountStatus());
     }
 }

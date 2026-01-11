@@ -1,4 +1,4 @@
-package com.challenge.Bank.model.status;
+package com.challenge.Bank.model.Enums;
 
 public enum Status {
     Active,

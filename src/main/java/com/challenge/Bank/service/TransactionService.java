@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class TransactionService {
         var valor = transactionRequestDTO.getValor();
 
         if (dataHora.isAfter(now())) { throw new UnprocessableEntity("Error relational in dataHora"); }
-        if (valor == null || valor < 0) { throw new BadRequest("Error relational in value is negative"); }
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) { throw new BadRequest("Error relational in value is negative"); }
 
         var entity = transactionMapper.toEntity(transactionRequestDTO);
         var saved = transactionRepository.save(entity);

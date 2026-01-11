@@ -2,6 +2,7 @@ package com.challenge.Bank.DTO.response;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
@@ -11,12 +12,12 @@ public class TransactionResponseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private Long id;
-    private Double valor;
+    private BigDecimal valor;
     private OffsetDateTime dataHora =  OffsetDateTime.now();
 
     public TransactionResponseDTO() {
     }
-    public TransactionResponseDTO(Long id, Double valor, OffsetDateTime dataHora) {
+    public TransactionResponseDTO(Long id, BigDecimal valor, OffsetDateTime dataHora) {
         this.id = id;
         this.valor = valor;
         this.dataHora = dataHora;
@@ -30,11 +31,11 @@ public class TransactionResponseDTO implements Serializable {
         this.id = id;
     }
 
-    public Double getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
 

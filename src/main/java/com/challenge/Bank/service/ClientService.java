@@ -5,7 +5,7 @@ import com.challenge.Bank.DTO.response.ClientResponseDTO;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
 import com.challenge.Bank.mappers.ClientMapper;
 import com.challenge.Bank.model.Client;
-import com.challenge.Bank.model.status.Status;
+import com.challenge.Bank.model.Enums.Status;
 import com.challenge.Bank.repository.ClientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

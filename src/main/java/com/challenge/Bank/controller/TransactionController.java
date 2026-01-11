@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/transacao/v1")
+@RequestMapping("api/v1/transacao")
 public class TransactionController {
 
     private final TransactionService transactionService;

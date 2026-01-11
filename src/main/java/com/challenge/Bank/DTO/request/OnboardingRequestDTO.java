@@ -1,11 +1,12 @@
 package com.challenge.Bank.DTO.request;
 
+import com.challenge.Bank.model.Enums.AccountType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class ClientRequestDTO {
+public class OnboardingRequestDTO {
 
     private String name;
     private String cpf;
@@ -14,14 +15,19 @@ public class ClientRequestDTO {
     private String email;
     private String password;
 
-    public ClientRequestDTO() {
+    private Long ClientId;
+    private AccountType type;
+
+    public OnboardingRequestDTO() {
     }
-    public ClientRequestDTO(String name, String cpf, LocalDate dateOfBirth, String email, String password) {
+    public OnboardingRequestDTO(String name, String cpf, LocalDate dateOfBirth, String email, String password, Long clientId, AccountType type) {
         this.name = name;
         this.cpf = cpf;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.password = password;
+        ClientId = clientId;
+        this.type = type;
     }
 
     public String getName() {
@@ -64,15 +70,31 @@ public class ClientRequestDTO {
         this.password = password;
     }
 
+    public AccountType getType() {
+        return type;
+    }
+
+    public void setType(AccountType type) {
+        this.type = type;
+    }
+
+    public Long getClientId() {
+        return ClientId;
+    }
+
+    public void setClientId(Long clientId) {
+        ClientId = clientId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        ClientRequestDTO that = (ClientRequestDTO) o;
-        return Objects.equals(getName(), that.getName()) && Objects.equals(getCpf(), that.getCpf()) && Objects.equals(getDateOfBirth(), that.getDateOfBirth()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getPassword(), that.getPassword());
+        OnboardingRequestDTO that = (OnboardingRequestDTO) o;
+        return Objects.equals(getName(), that.getName()) && Objects.equals(getCpf(), that.getCpf()) && Objects.equals(getDateOfBirth(), that.getDateOfBirth()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getPassword(), that.getPassword()) && Objects.equals(getClientId(), that.getClientId()) && getType() == that.getType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getCpf(), getDateOfBirth(), getEmail(), getPassword());
+        return Objects.hash(getName(), getCpf(), getDateOfBirth(), getEmail(), getPassword(), getClientId(), getType());
     }
 }

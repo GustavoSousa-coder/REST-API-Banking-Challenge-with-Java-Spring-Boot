@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/estatistica/v1")
+@RequestMapping("api/v1/estatistica")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;

@@ -1,7 +1,6 @@
 package com.challenge.Bank.service;
 
 import com.challenge.Bank.DTO.response.StatisticsResponseDTO;
-import com.challenge.Bank.DTO.response.TransactionResponseDTO;
 import com.challenge.Bank.model.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ public class StatisticsService {
         }
 
         DoubleSummaryStatistics statisticsTransactions = transactions.stream()
-                .mapToDouble(Transaction::getValor).summaryStatistics();
+                .mapToDouble(t -> t.getValor().doubleValue()).summaryStatistics();
 
         long end = System.currentTimeMillis();
         long timeRequest = end - start;

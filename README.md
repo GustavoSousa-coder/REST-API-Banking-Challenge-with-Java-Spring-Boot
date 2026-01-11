@@ -20,45 +20,56 @@ Na fase inicial do desafio, a aplicação foi desenvolvida sob premissas especí
 
 ## Contexto Original (Desafio Técnico)
 Este projeto iniciou-se como base para a resolução de um desafio técnico de mercado.
-
-**Objetivo do Desafio:**
-Desenvolver uma API REST que recebe Transações e retorna Estatísticas sobre transações por periodo de tempo:
-1. A API deve ser desenvolvida em Java ou Kotlin usando Spring boot.
-2. A API não deve conter banco de dados como MySql e afins e simulação de banco de dados como o H2.
-3. A API deve ter três end points que são: POST /transacao, DELETE /transacao e GET /estatistica.
-4. A API deve aceitar e responder com JSON.
-5. A API deve ter um tempo para processar as estatisticas
-
 *Para ver o escopo completo e original do desafio, consulte o arquivo [docs/escopo-do-desafio-Itau.md](./docs/escopo-do-desafio-Itau.md).*
 
+O objetivo inicial era criar uma API REST capaz de:
+- Receber transações financeiras via endpoint POST `/transactions`.
+- Calcular estatísticas em tempo real (soma, média, máximo, mínimo e cont
+- agem) para transações ocorridas nos últimos 60 segundos via endpoint GET `/statistics`.
+- Gerenciar transações antigas (mais de 60 segundos) retornando o status HTTP 204 (No Content).
 
 ## Status do Projeto
-**Versão Atual:** 1.0.0 (MVP)
-> Como menciondao antes a versão 1.0.0 se trata ainda da aplicação seguindo o escopo disposto em [docs/escopo-do-desafio-Itau.md](./docs/escopo-do-desafio-Itau.md) 
-> onde se trata de uma versão ainda limitada e focada apenas na lógica de serviço,
-> em cada commit terá uma nova funcionalidade e descrição do que foi feito e preparo para avnçar mais com o tempo.
+
+**Versão Atual:** 1.1.0 (MVP)
+
+**Descrição:** A Versão 1.1.0 do projeto já se difere do escopo original do desafio,
+incorporando melhorias significativas na estrutura do código e na organização dos dados, nessa versão foi adicionado uma nova camada comum no mercado,
+essa camada separando a entidade client de account o que foi fundamental muito comum onde vemos a separação correta de responsabilidades,
+para que siga a lógica comum onde em certos casos um cliente pode ter uma ou mais contas de diferentes tipos,
+além disso para melhorar na criação de dados foi adicionado uma camada de cadastro unico onde o foco é que o cliente preencha um formulário uma unica vez e comummente no mercado a que o próprio sistema gerar a conta bancária,
+essa camada conta com a geração de conta e cliente no banco de dados de forma simples.
+para melhor performace e organização o código gera primeiramente o cliente e depois a conta vinculada a esse cliente.
+essa camada de Onboarding que é onde ocorre o cadastro do cliente e a geração da conta bancaria foi fundamental para melhorar a organização do código e seguir boas práticas de desenvolvimento.
+além de conter as regras de segurança para garantir a integridade dos dados do cliente e da conta bancaria, evitando usar diretamente a entidade nos mappers dedicados a levar os dados, outro ponto crucial foi adicionar uma geração de resposta da criação, onde confirmamos que o objeto foi devidamente criado.
+embora ainda há falhas notavei e ainda não implementadas, o projeto ainda está e desenvolvimento ativo,
+caso esta versão tenha falhas de segurança ou falhas na documentação, essas serão corrigidas nas próximas versões.
+
+## Próximas Etapas
+**:** Nas próximas versões, o projeto buscará implementar:
+-Ligação e relacionamento entre clientes e contas bancárias.
+-Validação de idade mínima para abertura de conta.
+-Modelo de senha mais proximo ao mercado financeiro.
+-Melhor tratamento de erros e exceções que atenderão aos padrões RESTful e a toda a api.
+-geração natural e comum no mercado sobre os dados da conta bancária.
+-melhoria na regra de negócio para garantir que o sistema esteja alinhado com as práticas do mercado financeiro.
+-refatoração de afinamento das pendencias do projeto.
+-melhoria na lógica das transações que irão vir juntas com o relacionamento de clientes e contas.
+
+**OBS**: as descrições de implementações futuras são sugestões e podem ser ajustadas conforme o desenvolvimento avança e novas necessidades surgem, podem haver mais coisas a serem adicionada, que estarão na descrição da versão atual da próxima versão.
 
 ---
 
-## Evolução e Melhorias (Portfólio)
-*Esta seção descreve as melhorias implementadas ALÉM do escopo original do desafio.*
-
-> Na versão atual do projeto foi contém a lógica anterior e inicial ainda próximo do escopo do desafio, no entanto,
-> foram adicionadas melhorias significativas e essenciais em relação a engenharia e a boa base da aplicação,
-> como separar devidamente as camadas de entidade e dto, implementação de mapeadores (mappers) para conversão entre essas camadas,
-> esse tratamento é fundamental para melhor gerenciar os dados de forma segura e eficiente mantendo a integridade dos dados.
-> além disso cria uma base sólida para futuras expansões como o próximo passo, que é separar a entidade cliente e conta,
-> o próximo passo é separar o cliente que é criado no banco da sua conta podendo ele ter uma conta PJ ou Fisica, aproximando mais do que é visto no mercado profissional,
-> essa lógica mentém o modelo de boas práticas e o otimos gerenciamento de dados.
-
 Atualmente, o projeto conta com:
-- [x] Estrutura base da API (Controller, Service, Exceptions)
-- [x] Entity, DTO, mapper, configurations
-- [ ] Implementação de Docker (Em breve)
-- [ ] Autenticação com Spring Security (Em breve)
-- [ ] Testes unitários (Em breve)
-- [x] Documentação Swagger
-- [ ] Adição de uma camada relacionada a conta bancária separando o cliente e a conta (Em brave)
+- [x] Pacote de configuração do Spring Boot.
+- [x] Controllers con endpoints RESTful para Account, Client, Onboarding, Statistics e transactions.
+- [x] Estrutura de DTOs (Data Transfer Objects) para transferência de dados contando com request e responses.
+- [x] Exeptions customizadas para tratamento de erros.
+- [x] Mappers manuais para conversão entre entidades e DTOs além de converter de request para request em um mapper Onboarding.
+- [x] Model contendo entidades Account, Client e Transaction.
+- [x] Enums contendo opções de tipos de dados.
+- [x] Repository focado na lógica de armazenamento em memória.
+- [x] Services contendo a lógica de negócio para Account, Client, Onboarding, Statistics e Transactions.
+- [x] Documentação da API utilizando Spring doc (Swagger).
 
 ---
 
