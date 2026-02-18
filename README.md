@@ -32,7 +32,7 @@ O objetivo inicial era criar uma API REST capaz de:
 
 **Versão Atual:** 1.2.0 (MVP)
 
-**Descrição:** A Versão 1.1.0, Nessa versão há pontos forte sobre o tratamento de dados e a organização do código, onde o foco foi melhorar a estrutura do projeto,
+**Descrição:** A Versão 1.2.0, Nessa versão há pontos forte sobre o tratamento de dados e a organização do código, onde o foco foi melhorar a estrutura do projeto,
 seguindo boas práticas de desenvolvimento e organização de código, além de implementar uma camada de cadastro único para clientes e contas bancárias,
 melhorando a experiência do usuário e a eficiência do processo de criação de contas.
 
