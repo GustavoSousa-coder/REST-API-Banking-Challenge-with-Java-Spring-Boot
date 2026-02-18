@@ -1,0 +1,72 @@
+package com.challenge.Bank.clients.service;
+
+import com.challenge.Bank.clients.mapper.ClientMapper;
+import com.challenge.Bank.clients.repository.ClientRepository;
+import com.challenge.Bank.clients.DTO.ClientRequestDTO;
+import com.challenge.Bank.clients.DTO.ClientResponseDTO;
+import com.challenge.Bank.clients.model.Client;
+import com.challenge.Bank.exceptions.UnprocessableEntity;
+import com.challenge.Bank.Enums.ClientStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class ClientService {
+
+    private final Logger log =  LoggerFactory.getLogger(ClientService.class);
+
+    private final ClientRepository clientRepository;
+    private final ClientMapper clientMapper;
+
+    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper) {
+        this.clientRepository = clientRepository;
+        this.clientMapper = clientMapper;
+    }
+
+    public List<ClientResponseDTO> findAll() {
+        log.info("Entering findAll()");
+        List<Client> clients = clientRepository.findAll();
+        return clients.stream().map(clientMapper::toDTO).toList();
+    }
+
+    public ClientResponseDTO findById(UUID uuid) {
+        log.info("Entering findById(id)");
+        var entity = clientRepository.findById(uuid)
+                .orElseThrow(() -> new UnprocessableEntity("Client with id " + uuid + " not found"));
+        return clientMapper.toDTO(entity);
+    }
+
+    public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
+        log.info("Entering save(ClientRequestDTO)");
+        var entity = clientMapper.toEntity(clientRequestDTO);
+        var savedEntity = clientRepository.save(entity);
+        return clientMapper.toDTO(savedEntity);
+    }
+
+    public void deactivateUser(UUID uuid) {
+        log.info("Entering deactivateUser()");
+
+        var search = clientRepository.findById(uuid)
+                .orElseThrow(() -> new UnprocessableEntity("Client with id " + uuid + " not found"));
+
+        if (search.getAccountStatus() ==  ClientStatus.Inactive) {
+            throw new UnprocessableEntity("Client já inativo");
+        }
+
+        search.setAccountStatus(ClientStatus.Inactive);
+        clientMapper.toDTO(clientRepository.save(search));
+
+    }
+
+    public void validateCpf(String cpf) {
+        log.info("Entering validateCpf()");
+        if (clientRepository.findByCpf(cpf).isPresent()) {
+            throw new RuntimeException("Cpf Já existente");
+        }
+    }
+
+}

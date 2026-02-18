@@ -1,6 +1,17 @@
 spring:
-  application:
-    name: Bank
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bankdb?useTimezone=true&serverTimezone=UTC
+    username: root
+    password: 1234
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+    show-sql: true
 logging:
   level:
     root: INFO
+    org.hibernate.SQL: DEBUG

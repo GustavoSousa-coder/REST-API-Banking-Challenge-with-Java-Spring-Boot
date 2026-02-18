@@ -30,30 +30,33 @@ O objetivo inicial era criar uma API REST capaz de:
 
 ## Status do Projeto
 
-**Versão Atual:** 1.1.0 (MVP)
+**Versão Atual:** 1.2.0 (MVP)
 
-**Descrição:** A Versão 1.1.0 do projeto já se difere do escopo original do desafio,
-incorporando melhorias significativas na estrutura do código e na organização dos dados, nessa versão foi adicionado uma nova camada comum no mercado,
-essa camada separando a entidade client de account o que foi fundamental muito comum onde vemos a separação correta de responsabilidades,
-para que siga a lógica comum onde em certos casos um cliente pode ter uma ou mais contas de diferentes tipos,
-além disso para melhorar na criação de dados foi adicionado uma camada de cadastro unico onde o foco é que o cliente preencha um formulário uma unica vez e comummente no mercado a que o próprio sistema gerar a conta bancária,
-essa camada conta com a geração de conta e cliente no banco de dados de forma simples.
-para melhor performace e organização o código gera primeiramente o cliente e depois a conta vinculada a esse cliente.
-essa camada de Onboarding que é onde ocorre o cadastro do cliente e a geração da conta bancaria foi fundamental para melhorar a organização do código e seguir boas práticas de desenvolvimento.
-além de conter as regras de segurança para garantir a integridade dos dados do cliente e da conta bancaria, evitando usar diretamente a entidade nos mappers dedicados a levar os dados, outro ponto crucial foi adicionar uma geração de resposta da criação, onde confirmamos que o objeto foi devidamente criado.
-embora ainda há falhas notavei e ainda não implementadas, o projeto ainda está e desenvolvimento ativo,
-caso esta versão tenha falhas de segurança ou falhas na documentação, essas serão corrigidas nas próximas versões.
+**Descrição:** A Versão 1.1.0, Nessa versão há pontos forte sobre o tratamento de dados e a organização do código, onde o foco foi melhorar a estrutura do projeto,
+seguindo boas práticas de desenvolvimento e organização de código, além de implementar uma camada de cadastro único para clientes e contas bancárias,
+melhorando a experiência do usuário e a eficiência do processo de criação de contas.
+
+Primeiramente melhorei a estrutura do projeto organizando os pacotes de forma mais clara e que fosse fácil de ler,
+por conta do crescimento das funcionalidades e adição de novas camadas.
+
+Refatorando a maior parte do código, a melhor melhoria feita foi no relacionamento entre as enitdades como cliente com relacionamento com account 1:N,
+entre account e transaction 1:N, além de melhorar o relacionamento durante o desenvolvimento e refatoração de transaction decidi chegar minimamente próximo ao mercado adicionando a função de poder criar uma chave de acesso para a transferência de dinheiro de uma conta para outra,
+isso ajuda a identificar melhor quem está realizando a transferância e quem está recebendo, além de melhorar a lógica de captura de estatísticas deixando o código mais limpo,
+foi implementado a verificação de idade mínima na abertura da conta, essa esnrte outras aplicações e regras de negócio foram implementadas focando na melhor performace.
+
+Pendencias, Infelizmente não há implementação nessa versão sobre a parte de segurança e manipulação da senha,
+além disso ainda há pendencia na documentação usando Swagger,
+a faltam implementação sobre testes unitários.
+
+próxima versão, o foco será a implementação e melhoria do modelo de senha,
+além de melhorar o tratamento de erros e exceções que atenderão aos padrões RESTful e a toda a api, além de refatoração de afinamento das pendencias do projeto como o uso adequado de certas exceções,
+além disso, a documentação usando Swagger e testes unitários serão implementados.
 
 ## Próximas Etapas
 **:** Nas próximas versões, o projeto buscará implementar:
--Ligação e relacionamento entre clientes e contas bancárias.
--Validação de idade mínima para abertura de conta.
 -Modelo de senha mais proximo ao mercado financeiro.
 -Melhor tratamento de erros e exceções que atenderão aos padrões RESTful e a toda a api.
--geração natural e comum no mercado sobre os dados da conta bancária.
--melhoria na regra de negócio para garantir que o sistema esteja alinhado com as práticas do mercado financeiro.
--refatoração de afinamento das pendencias do projeto.
--melhoria na lógica das transações que irão vir juntas com o relacionamento de clientes e contas.
+-refatoração de afinamento das pendencias do projeto como o uso adequado de certas exceções.
 
 **OBS**: as descrições de implementações futuras são sugestões e podem ser ajustadas conforme o desenvolvimento avança e novas necessidades surgem, podem haver mais coisas a serem adicionada, que estarão na descrição da versão atual da próxima versão.
 
