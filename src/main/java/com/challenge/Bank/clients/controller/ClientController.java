@@ -31,8 +31,8 @@ public class ClientController {
                     @ApiResponse(description = "ok", responseCode = "200", content = @Content),
             }
     )
-    public List<ClientResponseDTO> findAll() {
-        return clientService.findAll();
+    public ResponseEntity<List<ClientResponseDTO>> findAll() {
+        return ResponseEntity.ok(clientService.findAll());
     }
 
     @GetMapping(value = "/{uuid}",  produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,8 +44,8 @@ public class ClientController {
                     @ApiResponse(description = "ok", responseCode = "200", content = @Content),
             }
     )
-    public ClientResponseDTO findById(@PathVariable UUID uuid) {
-        return clientService.findById(uuid);
+    public ResponseEntity<ClientResponseDTO> findById(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(clientService.findById(uuid));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -24,7 +24,6 @@ public class StatisticsController {
         this.statisticsService = statisticsService;
     }
 
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StatisticsResponseDTO> constructorStatistics(
             @RequestParam(value = "TimeSearch", required = false, defaultValue = "60") Integer TimeSearch) {

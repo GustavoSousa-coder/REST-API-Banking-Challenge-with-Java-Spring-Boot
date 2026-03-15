@@ -9,17 +9,18 @@ import org.springframework.stereotype.Component;
 public class AddressKeyMapper {
 
     public AddressKey toEntity(AddressKeyRequestDTO dto) {
-        AddressKey addressKey = new AddressKey();
-        addressKey.setKeyType(dto.getKeyType());
-        addressKey.setKeyValue(dto.getKeyValue());
-        return addressKey;
+        return AddressKey.builder()
+                .keyType(dto.keyType())
+                .keyValue(dto.keyValue())
+                .uuid(dto.accountId())
+                .build();
     }
 
     public AddressKeyResponseDTO toDTO(AddressKey entity) {
-        AddressKeyResponseDTO dto = new AddressKeyResponseDTO();
-        dto.setKeyType(entity.getKeyType());
-        dto.setKeyValue(entity.getKeyValue());
-        return dto;
+        return new AddressKeyResponseDTO(
+                entity.getKeyType(),
+                entity.getKeyValue()
+        );
     }
 
 }

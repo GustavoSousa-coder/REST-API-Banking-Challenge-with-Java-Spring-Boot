@@ -4,6 +4,7 @@ import com.challenge.Bank.accounts.DTO.AccountRequestDTO;
 import com.challenge.Bank.accounts.DTO.AccountResponseDTO;
 import com.challenge.Bank.accounts.service.AccountService;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,18 +20,18 @@ public class AccountController {
     }
 
     @GetMapping(value = "/{ClientUuid}/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<AccountResponseDTO> findAllByClientId(@PathVariable UUID ClientUuid) {
-        return accountService.findAllByClientId(ClientUuid);
+    public ResponseEntity<List<AccountResponseDTO>> findAllByClientId(@PathVariable UUID ClientUuid) {
+        return ResponseEntity.ok(accountService.findAllByClientId(ClientUuid));
     }
 
     @GetMapping(value = "/{uuid}/account", produces = MediaType.APPLICATION_JSON_VALUE)
-    public AccountResponseDTO findById(@PathVariable UUID uuid) {
-        return accountService.findById(uuid);
+    public ResponseEntity<AccountResponseDTO> findById(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(accountService.findById(uuid));
     }
 
-    @PostMapping(value = "/{uuid}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AccountResponseDTO save(@PathVariable UUID uuid, @RequestBody AccountRequestDTO accountRequestDTO) {
-        return accountService.saveAccount(accountRequestDTO, uuid);
+    @PostMapping(value = "/{clientUuid}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AccountResponseDTO save(@PathVariable UUID clientUuid, @RequestBody AccountRequestDTO accountRequestDTO) {
+        return accountService.saveAccount(accountRequestDTO, clientUuid);
     }
 
     @DeleteMapping(value = "/{uuid}")

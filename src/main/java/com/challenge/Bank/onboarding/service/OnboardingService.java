@@ -2,6 +2,7 @@ package com.challenge.Bank.onboarding.service;
 
 import com.challenge.Bank.accounts.service.AccountService;
 import com.challenge.Bank.clients.service.ClientService;
+import com.challenge.Bank.exceptions.UnprocessableEntity;
 import com.challenge.Bank.onboarding.DTO.OnboardingRequestDTO;
 import com.challenge.Bank.onboarding.DTO.OnboardingResponseDTO;
 import com.challenge.Bank.onboarding.mapper.OnboardingMapper;
@@ -25,15 +26,17 @@ public class OnboardingService {
 
     public OnboardingResponseDTO save(OnboardingRequestDTO onboardingRequestDTO) {
 
-        if (Period.between(onboardingRequestDTO.getDateOfBirth(), LocalDate.now()).getYears() < 18) {
-            throw new RuntimeException("Invalid date of birth");
+        if (Period.between(onboardingRequestDTO.dateOfBirth(), LocalDate.now()).getYears() < 18) {
+            throw new UnprocessableEntity("Invalid date of birth");
         }
+
+        clientService.validateCpf(onboardingRequestDTO.cpf());
 
         var clientRequest = onboardingMapper.toClientRequest(onboardingRequestDTO);
         var clientResponse = clientService.save(clientRequest);
 
         var accountRequest = onboardingMapper.toAccountRequest(onboardingRequestDTO);
-        var accountResponse = accountService.saveAccount(accountRequest, clientResponse.getUuid());
+        var accountResponse = accountService.saveAccount(accountRequest, clientResponse.uuid());
 
         return onboardingMapper.toOnboardingResponse(clientResponse, accountResponse);
     }

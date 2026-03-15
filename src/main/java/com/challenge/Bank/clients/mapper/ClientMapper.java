@@ -9,23 +9,23 @@ import org.springframework.stereotype.Component;
 public class ClientMapper {
 
     public Client toEntity(ClientRequestDTO dto) {
-        Client client = new Client();
-        client.setName(dto.getName());
-        client.setCpf(dto.getCpf());
-        client.setDateOfBirth(dto.getDateOfBirth());
-        client.setEmail(dto.getEmail());
-        client.setPassword(dto.getPassword());
-        return client;
+        return Client.builder()
+                .name(dto.name())
+                .cpf(dto.cpf())
+                .dateOfBirth(dto.dateOfBirth())
+                .email(dto.email())
+                .password(dto.password())
+                .build();
     }
 
     public ClientResponseDTO toDTO(Client client) {
-        ClientResponseDTO dto = new ClientResponseDTO();
-        dto.setUuid(client.getUuid());
-        dto.setName(client.getName());
-        dto.setDateOfBirth(client.getDateOfBirth());
-        dto.setEmail(client.getEmail());
-        dto.setAccountStatus(client.getAccountStatus());
-        return dto;
+        return new  ClientResponseDTO(
+                client.getUuid(),
+                client.getName(),
+                client.getDateOfBirth(),
+                client.getEmail(),
+                client.getClientStatus()
+        );
     }
 
 }

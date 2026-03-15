@@ -1,12 +1,14 @@
 package com.challenge.Bank.accounts.service;
 
 import com.challenge.Bank.Enums.AccountStatus;
+import com.challenge.Bank.Enums.ClientStatus;
 import com.challenge.Bank.accounts.DTO.AccountRequestDTO;
 import com.challenge.Bank.accounts.DTO.AccountResponseDTO;
 import com.challenge.Bank.accounts.mapper.AccountMapper;
 import com.challenge.Bank.accounts.model.Account;
 import com.challenge.Bank.accounts.repository.AccountRepository;
 import com.challenge.Bank.clients.repository.ClientRepository;
+import com.challenge.Bank.exceptions.NotFound;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,25 +36,29 @@ public class AccountService {
         log.info("Find all accounts by client id {}", clientUuid);
 
         clientRepository.findById(clientUuid)
-                .orElseThrow(() -> new RuntimeException("client not found"));
+                .orElseThrow(() -> new NotFound("client not found"));
 
-        var accounts = accountRepository.findAll();
-        return accounts.stream().map(accountMapper::ToDTO).toList();
+        return accountRepository
+                .findAll().stream()
+                .map(accountMapper::ToDTO)
+                .toList();
     }
 
     public AccountResponseDTO findById(UUID uuid) {
         log.info("Find account by id {}", uuid);
-        Account account = accountRepository.findById(uuid)
-                .orElseThrow(() -> new UnprocessableEntity("Account not found"));
-        return accountMapper.ToDTO(account);
+
+        return accountRepository.findById(uuid)
+                .map(accountMapper::ToDTO)
+                .orElseThrow(() -> new NotFound("Account not found"));
     }
 
-    public AccountResponseDTO saveAccount(AccountRequestDTO accountRequestDTO, UUID uuid) {
-        if(uuid == null) { throw new  IllegalArgumentException("Client id is null"); }
+    public AccountResponseDTO saveAccount(AccountRequestDTO accountRequestDTO, UUID clientUuid) {
+        if(clientUuid == null) { throw new  IllegalArgumentException("Client id is null"); }
         var entity = accountMapper.ToEntity(accountRequestDTO);
-        var client = clientRepository.findById(uuid)
+        var client = clientRepository.findById(clientUuid)
                 .orElseThrow(() -> new UnprocessableEntity("Client not found"));
         entity.setClient(client);
+        if (client.getClientStatus() != ClientStatus.Active) { throw new UnprocessableEntity("Client is not active"); }
         var accountSave = accountRepository.save(entity);
         log.info("Save account");
         return accountMapper.ToDTO(accountSave);

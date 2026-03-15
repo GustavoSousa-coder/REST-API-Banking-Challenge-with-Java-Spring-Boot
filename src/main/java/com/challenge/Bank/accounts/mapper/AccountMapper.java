@@ -10,20 +10,20 @@ import org.springframework.stereotype.Component;
 public class AccountMapper {
 
     public Account ToEntity(AccountRequestDTO dto) {
-        Account account = new Account();
-        account.setType(dto.getType());
-        return account;
+        return Account.builder()
+                .type(dto.type())
+                .build();
     }
 
     public AccountResponseDTO ToDTO(Account account) {
-        AccountResponseDTO dto = new AccountResponseDTO();
-        dto.setUuid(account.getUuid());
-        dto.setClientUuid(account.getClient().getUuid());
-        dto.setBalance(account.getBalance());
-        dto.setType(account.getType());
-        dto.setOverdraftLimit(account.getOverdraftLimit());
-        dto.setStatus(account.getStatus());
-        return dto;
+        return new AccountResponseDTO(
+                account.getUuid(),
+                account.getClient().getUuid(),
+                account.getBalance(),
+                account.getType(),
+                account.getOverdraftLimit(),
+                account.getStatus()
+        );
     }
 
 }

@@ -12,34 +12,34 @@ import org.springframework.stereotype.Component;
 public class OnboardingMapper {
 
     public ClientRequestDTO toClientRequest(OnboardingRequestDTO onboardingRequestDTO) {
-        ClientRequestDTO clientRequestDTO = new ClientRequestDTO();
-        clientRequestDTO.setName(onboardingRequestDTO.getName());
-        clientRequestDTO.setCpf(onboardingRequestDTO.getCpf());
-        clientRequestDTO.setDateOfBirth(onboardingRequestDTO.getDateOfBirth());
-        clientRequestDTO.setEmail(onboardingRequestDTO.getEmail());
-        clientRequestDTO.setPassword(onboardingRequestDTO.getPassword());
-        return clientRequestDTO;
+        return new ClientRequestDTO(
+                onboardingRequestDTO.name(),
+                onboardingRequestDTO.cpf(),
+                onboardingRequestDTO.dateOfBirth(),
+                onboardingRequestDTO.email(),
+                onboardingRequestDTO.password()
+        );
     }
 
     public AccountRequestDTO toAccountRequest(OnboardingRequestDTO onboardingRequestDTO) {
-        AccountRequestDTO accountRequestDTO = new AccountRequestDTO();
-        accountRequestDTO.setType(onboardingRequestDTO.getType());
-        return accountRequestDTO;
+        return new  AccountRequestDTO(
+                onboardingRequestDTO.type()
+        );
     }
 
     public OnboardingResponseDTO toOnboardingResponse(ClientResponseDTO clientResponseDTO, AccountResponseDTO accountResponseDTO) {
         return new OnboardingResponseDTO(
-                clientResponseDTO.getUuid(),
-                clientResponseDTO.getName(),
-                clientResponseDTO.getDateOfBirth(),
-                clientResponseDTO.getEmail(),
-                clientResponseDTO.getAccountStatus(),
+                clientResponseDTO.uuid(),
+                clientResponseDTO.name(),
+                clientResponseDTO.dateOfBirth(),
+                clientResponseDTO.email(),
+                clientResponseDTO.clientStatus(),
 
-                accountResponseDTO.getUuid(),
-                accountResponseDTO.getBalance(),
-                accountResponseDTO.getType(),
-                accountResponseDTO.getOverdraftLimit(),
-                accountResponseDTO.getStatus()
+                accountResponseDTO.uuid(),
+                accountResponseDTO.balance(),
+                accountResponseDTO.type(),
+                accountResponseDTO.overdraftLimit(),
+                accountResponseDTO.status()
         );
     }
 
