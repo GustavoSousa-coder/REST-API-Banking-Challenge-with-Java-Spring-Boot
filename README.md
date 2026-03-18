@@ -16,20 +16,23 @@ Na fase inicial, a aplicação foi desenvolvida sob premissas específicas para 
 
 ## Status do Projeto
 
-**Versão Atual:** 1.3.0 (Refatoração de Domínio e Arquitetura)
+**Versão Atual:** 1.3.1 (Melhorias com a segurança de senhas e criptografias de senhas)
 
-**Descrição:** Esta versão marca uma transição crítica no projeto, focada na robustez arquitetural e na segurança do domínio. O código foi integralmente refatorado para garantir que a lógica de negócio seja o coração da aplicação, tornando-a legível, segura e pronta para escalabilidade.
+**Descrição:** Essa versão mostra como foi adicionado novos recursos sobre gerenciamento de senhas e suas respectivas seguranças, nessa versão o sistema trata a senha com segurança criptografando na criação de um novo cliente(usuário do sistema).
 
 ### Principais Melhorias desta Versão:
 
-- **Refatoração de Entidades e DTOs:** Simplificação completa das classes de dados, removendo verbosidade e abrindo caminho para lógicas mais robustas. A estrutura agora segue padrões de Clean Code, facilitando a manutenção.
-- **Domínio Rico e Imutabilidade:** O uso indiscriminado de métodos `Set` foi descontinuado em favor de uma abordagem mais responsável. Implementamos métodos de negócio específicos que protegem o estado da entidade, garantindo que o objeto seja sempre consistente e seguro contra manipulações indevidas.
-- **Nova Arquitetura de Exceções RESTful:** Toda a camada de tratamento de erros foi redesenhada. Implementamos exceções personalizadas como `NotFoundException` e `ConflictException`, permitindo que a API responda com os Status Codes adequados (404, 409, 422, 403), tornando a comunicação com o cliente mais eficiente e clara.
-- **Regras de Negócio Avançadas:**
-    - **Validação de Cadastro:** Implementação de lógicas para verificação de idade mínima e validação rigorosa de CPF.
-    - **Controle de Status:** Introdução de verificações de estado (Active/Inactive) para Clientes e Contas, bloqueando operações financeiras caso os requisitos do sistema não sejam atendidos.
-- **Relacionamentos e Chaves:** Otimização dos relacionamentos JPA (1:N) e implementação de chaves de endereçamento (`AddressKey`) para transferências, aproximando a lógica ao funcionamento real de um sistema de pagamentos.
+Segurança e Integridade de Dados (Refatoração de Credenciais)
 
+Nesta etapa, o foco foi a implementação da base de segurança da API, preparando o terreno para a autenticação robusta com JWT.
+
+Hashing de Alta Performance: Implementação do BCrypt para tratamento de senhas. O uso de Salt automático garante que, mesmo que o banco de dados seja comprometido, as senhas permaneçam ilegíveis e seguras contra ataques de força bruta.
+
+Arquitetura Orientada à Segurança: A criptografia foi integrada diretamente à camada de Mapping. Ao converter um DTO em Entidade, a senha é hasheada instantaneamente. Isso garante que a entidade de domínio nunca "toque" na memória com a senha em texto plano, eliminando riscos de vazamento em logs ou estados inconsistentes.
+
+Spring Security & Stateless: Configuração do SecurityFilterChain com política Stateless, desabilitando proteções desnecessárias para APIs REST (como CSRF) e preparando o sistema para o fluxo de tokens JWT.
+
+Clean Code & Encapsulamento: Mantive o compromisso de não utilizar Setters. A senha protegida entra na entidade via Builder, respeitando a imutabilidade do objeto de domínio.
 ---
 
 ## Próximas Etapas

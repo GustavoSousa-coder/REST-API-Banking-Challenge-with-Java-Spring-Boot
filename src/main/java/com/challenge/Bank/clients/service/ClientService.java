@@ -11,6 +11,7 @@ import com.challenge.Bank.exceptions.UnprocessableEntity;
 import com.challenge.Bank.Enums.ClientStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,7 +23,6 @@ import java.util.UUID;
 public class ClientService {
 
     private final Logger log =  LoggerFactory.getLogger(ClientService.class);
-
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
 
@@ -54,8 +54,8 @@ public class ClientService {
         if (Period.between(clientRequestDTO.dateOfBirth(), LocalDate.now()).getYears() < 18) {
             throw new UnprocessableEntity("Invalid date of birth");
         }
-
         validateCpf(clientRequestDTO.cpf());
+
         var entity = clientMapper.toEntity(clientRequestDTO);
         var savedEntity = clientRepository.save(entity);
         return clientMapper.toDTO(savedEntity);

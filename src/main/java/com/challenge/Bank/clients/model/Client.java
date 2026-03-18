@@ -34,8 +34,9 @@ public class Client {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "password", length = 50)
-    private String password; // TODO: passar a criptografar e tratar a senha, no momento é apenas para testes
+    @Setter(AccessLevel.NONE)
+    @Column(name = "password", length = 100)
+    private String password;
 
     @Setter(AccessLevel.PUBLIC)
     @Builder.Default
