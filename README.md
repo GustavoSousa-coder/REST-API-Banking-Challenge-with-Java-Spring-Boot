@@ -16,29 +16,27 @@ Na fase inicial, a aplicação foi desenvolvida sob premissas específicas para 
 
 ## Status do Projeto
 
-**Versão Atual:** 1.3.1 (Melhorias com a segurança de senhas e criptografias de senhas)
+**Versão Atual:** 1.3.2 (Melhorias com gerenciamento com banco de dados e segurança)
 
-**Descrição:** Essa versão mostra como foi adicionado novos recursos sobre gerenciamento de senhas e suas respectivas seguranças, nessa versão o sistema trata a senha com segurança criptografando na criação de um novo cliente(usuário do sistema).
+**Descrição:** Nessa versão adicionamos a camada de segurança, gerenciamento e versionamento com o flyway, que tanto nos abre caminho para a implementação de autenticação JWT, quanto para a melhoria da performance e integridade dos dados, com a adoção de UUIDs binários e precisão decimal para campos financeiros.
 
 ### Principais Melhorias desta Versão:
 
-Segurança e Integridade de Dados (Refatoração de Credenciais)
+Segurança, Persistência e Integridade de Dados (Refatoração de Infraestrutura)
+Nesta etapa, consolidamos a base de segurança e a arquitetura de dados da API, garantindo que a comunicação entre o Java (Hibernate) e o MySQL seja performática e à prova de falhas, preparando o terreno para a autenticação JWT.
 
-Nesta etapa, o foco foi a implementação da base de segurança da API, preparando o terreno para a autenticação robusta com JWT.
+Versionamento de Banco de Dados com Flyway: Implementação de migrações automatizadas (V1 e V2). A estrutura do banco agora é versionada, permitindo um ambiente de desenvolvimento replicável e consistente, com carga inicial de dados (Seed) automatizada.
 
-Hashing de Alta Performance: Implementação do BCrypt para tratamento de senhas. O uso de Salt automático garante que, mesmo que o banco de dados seja comprometido, as senhas permaneçam ilegíveis e seguras contra ataques de força bruta.
+Otimização de Performance com UUID (Binary16): Refatoração completa da estratégia de identificadores. Substituímos Strings por BINARY(16) no MySQL, alinhando a performance nativa do banco com o padrão do Hibernate 6, reduzindo o consumo de armazenamento e acelerando a indexação de chaves primárias e estrangeiras.
 
-Arquitetura Orientada à Segurança: A criptografia foi integrada diretamente à camada de Mapping. Ao converter um DTO em Entidade, a senha é hasheada instantaneamente. Isso garante que a entidade de domínio nunca "toque" na memória com a senha em texto plano, eliminando riscos de vazamento em logs ou estados inconsistentes.
+Integridade Financeira com Precisão Decimal: Ajuste rigoroso dos campos monetários (balance e overdraft_limit). Utilizamos BigDecimal no Java e DECIMAL(19,2) no SQL para eliminar erros de arredondamento comuns em tipos de ponto flutuante, garantindo precisão absoluta em transações bancárias.
 
-Spring Security & Stateless: Configuração do SecurityFilterChain com política Stateless, desabilitando proteções desnecessárias para APIs REST (como CSRF) e preparando o sistema para o fluxo de tokens JWT.
-
-Clean Code & Encapsulamento: Mantive o compromisso de não utilizar Setters. A senha protegida entra na entidade via Builder, respeitando a imutabilidade do objeto de domínio.
+Arquitetura Stateless & Clean Code: Configuração inicial do SecurityFilterChain focada em APIs REST, desabilitando CSRF e sessões de estado, mantendo o compromisso com o encapsulamento e a imutabilidade dos objetos de domínio.
 ---
 
 ## Próximas Etapas
 Com a base de domínio consolidada, os próximos passos focam na infraestrutura e segurança externa:
-- **Persistência e Evolução de Banco:** Integração do Flyway para versionamento de base de dados.
-- **Segurança:** Implementação de criptografia de senhas e autenticação via JWT (Stateless).
+- **Segurança:** Implementação autenticação via JWT (Stateless).
 - **Qualidade:** Cobertura de testes unitários para as lógicas de serviço e domínio.
 - **Documentação:** Refinamento da documentação via Swagger/OpenAPI.
 

@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @Entity
-@Table(name = "account")
+@Table(name = "tb_accounts")
 public class Account {
 
     @Id
@@ -33,7 +33,7 @@ public class Account {
     private String agencyNumber = "0001";
 
     @Builder.Default
-    @Column(name = "balance", nullable = false)
+    @Column(name = "balance", nullable = false, precision = 19, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Setter(AccessLevel.PUBLIC)
@@ -41,8 +41,8 @@ public class Account {
     private AccountType type;
 
     @Builder.Default
-    @Column(name = "overdraft_limit", nullable = false)
-    private Double overdraftLimit = 1.000;
+    @Column(name = "overdraft_limit", nullable = false, precision = 19, scale = 2)
+    private BigDecimal overdraftLimit =  BigDecimal.valueOf(1.000);
 
     @Builder.Default
     @Setter(AccessLevel.PUBLIC)

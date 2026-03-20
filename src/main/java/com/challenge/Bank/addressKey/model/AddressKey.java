@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @Entity
-@Table(name = "AddressKey")
+@Table(name = "tb_address_keys")
 public class AddressKey {
 
     @Id
@@ -26,6 +26,7 @@ public class AddressKey {
 
     @Setter(AccessLevel.PUBLIC)
     @Enumerated(EnumType.STRING)
+    @Column(name = "key_type", nullable = false)
     private KeyType keyType;
 
     @ManyToOne(fetch = FetchType.EAGER)

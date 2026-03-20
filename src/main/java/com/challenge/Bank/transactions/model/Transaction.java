@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @Entity
-@Table(name = "transactions")
+@Table(name = "tb_transactions")
 public class Transaction {
 
     @Id

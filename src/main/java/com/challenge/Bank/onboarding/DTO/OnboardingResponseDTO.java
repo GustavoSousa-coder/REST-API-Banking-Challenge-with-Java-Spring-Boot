@@ -19,6 +19,6 @@ public record OnboardingResponseDTO(
     UUID AccountUuid,
     BigDecimal balance,
     AccountType type,
-    Double overdraftLimit,
+    BigDecimal overdraftLimit,
     AccountStatus status
 ) {}

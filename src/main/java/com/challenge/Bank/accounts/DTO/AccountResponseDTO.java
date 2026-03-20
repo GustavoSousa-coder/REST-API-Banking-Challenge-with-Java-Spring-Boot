@@ -4,7 +4,6 @@ import com.challenge.Bank.Enums.AccountStatus;
 import com.challenge.Bank.Enums.AccountType;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.UUID;
 
 public record AccountResponseDTO(
@@ -12,6 +11,6 @@ public record AccountResponseDTO(
         UUID clientUuid,
         BigDecimal balance,
         AccountType type,
-        Double overdraftLimit,
+        BigDecimal overdraftLimit,
         AccountStatus status
 ) {}

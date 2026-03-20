@@ -15,7 +15,7 @@ import java.util.*;
 @Getter
 @EqualsAndHashCode
 @Entity
-@Table(name = "clients")
+@Table(name = "tb_clients")
 public class Client {
 
     @Id
@@ -40,7 +40,7 @@ public class Client {
 
     @Setter(AccessLevel.PUBLIC)
     @Builder.Default
-    @Column(name = "account_status", nullable = false, length = 10)
+    @Column(name = "client_status", nullable = false, length = 10)
     private ClientStatus clientStatus = ClientStatus.Active;
 
     @Builder.Default
