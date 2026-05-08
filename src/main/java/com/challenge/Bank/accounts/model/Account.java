@@ -36,6 +36,7 @@ public class Account {
     @Column(name = "balance", nullable = false, precision = 19, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Enumerated(EnumType.STRING)
     @Setter(AccessLevel.PUBLIC)
     @Column(name = "type", unique = false, nullable = false,  length = 10)
     private AccountType type;
@@ -44,6 +45,7 @@ public class Account {
     @Column(name = "overdraft_limit", nullable = false, precision = 19, scale = 2)
     private BigDecimal overdraftLimit =  BigDecimal.valueOf(1.000);
 
+    @Enumerated(EnumType.STRING)
     @Builder.Default
     @Setter(AccessLevel.PUBLIC)
     @Column(name = "status", unique = false, nullable = false, length = 10)

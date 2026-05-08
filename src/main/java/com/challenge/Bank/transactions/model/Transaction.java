@@ -32,6 +32,7 @@ public class Transaction {
     @Column(name = "transaction_type", nullable = false)
     private TransactionType transactionType;
 
+    @Enumerated(EnumType.STRING)
     @Setter(AccessLevel.PUBLIC)
     @Column(name = "status")
     private TransactionStatus status;

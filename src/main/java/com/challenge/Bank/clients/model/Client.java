@@ -1,9 +1,13 @@
 package com.challenge.Bank.clients.model;
 
+import com.challenge.Bank.Enums.ClientRoles;
 import com.challenge.Bank.Enums.ClientStatus;
 import com.challenge.Bank.accounts.model.Account;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -16,7 +20,7 @@ import java.util.*;
 @EqualsAndHashCode
 @Entity
 @Table(name = "tb_clients")
-public class Client {
+public class Client implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,10 +42,11 @@ public class Client {
     @Column(name = "password", length = 100)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Setter(AccessLevel.PUBLIC)
     @Builder.Default
     @Column(name = "client_status", nullable = false, length = 10)
-    private ClientStatus clientStatus = ClientStatus.Active;
+    private ClientStatus clientStatus = ClientStatus.ACTIVE;
 
     @Builder.Default
     @Column(name = "created_at")
@@ -49,4 +54,41 @@ public class Client {
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Account> accounts = new ArrayList<>();
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private ClientRoles role = ClientRoles.CLIENT;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == ClientRoles.ADMIN) return List.of(new SimpleGrantedAuthority("ADMIN"), new SimpleGrantedAuthority("CLIENT"));
+        else return List.of(new SimpleGrantedAuthority("CLIENT"));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { // TODO adicionar lógica funcional por precisar de um campo especifico
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return  this.clientStatus != ClientStatus.BLOCKED &&
+                this.clientStatus != ClientStatus.SUSPICIOUS;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() { // TODO adicionar lógica funcional por precisar de lógica extra
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.clientStatus == ClientStatus.ACTIVE;
+    }
 }

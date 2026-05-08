@@ -4,7 +4,6 @@ import com.challenge.Bank.clients.mapper.ClientMapper;
 import com.challenge.Bank.clients.repository.ClientRepository;
 import com.challenge.Bank.clients.DTO.ClientRequestDTO;
 import com.challenge.Bank.clients.DTO.ClientResponseDTO;
-import com.challenge.Bank.clients.model.Client;
 import com.challenge.Bank.exceptions.Conflict;
 import com.challenge.Bank.exceptions.NotFound;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
@@ -25,10 +24,12 @@ public class ClientService {
     private final Logger log =  LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper) {
+    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper, PasswordEncoder passwordEncoder) {
         this.clientRepository = clientRepository;
         this.clientMapper = clientMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<ClientResponseDTO> findAll() {
@@ -48,38 +49,53 @@ public class ClientService {
                 .orElseThrow(() -> new NotFound("Client with id " + uuid + " not found"));
     }
 
-    public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
-        log.info("Entering save(ClientRequestDTO)");
-
-        if (Period.between(clientRequestDTO.dateOfBirth(), LocalDate.now()).getYears() < 18) {
-            throw new UnprocessableEntity("Invalid date of birth");
-        }
-        validateCpf(clientRequestDTO.cpf());
-
-        var entity = clientMapper.toEntity(clientRequestDTO);
-        var savedEntity = clientRepository.save(entity);
-        return clientMapper.toDTO(savedEntity);
-    }
-
     public void deactivateUser(UUID uuid) {
         log.info("Entering deactivateUser()");
 
         var search = clientRepository.findById(uuid)
                 .orElseThrow(() -> new UnprocessableEntity("Client with id " + uuid + " not found"));
 
-        if (search.getClientStatus() ==  ClientStatus.Inactive) {
+        if (search.getClientStatus() ==  ClientStatus.INACTIVE) {
             throw new UnprocessableEntity("Client já inativo");
         }
 
-        search.setClientStatus(ClientStatus.Inactive);
+        search.setClientStatus(ClientStatus.INACTIVE);
         clientMapper.toDTO(clientRepository.save(search));
 
     }
 
-    public void validateCpf(String cpf) {
+    public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
+        log.info("Entering save(ClientRequestDTO)");
+
+        validateCpf(clientRequestDTO.cpf());
+        validateEmail(clientRequestDTO.email());
+        validateAge(clientRequestDTO);
+
+        var encodedPassword = passwordEncoder.encode(clientRequestDTO.password());
+        var entity = clientMapper.toEntity(clientRequestDTO, encodedPassword);
+
+        var savedEntity = clientRepository.save(entity);
+        return clientMapper.toDTO(savedEntity);
+    }
+
+    private void validateCpf(String cpf) {
         log.info("Entering validateCpf()");
         if (clientRepository.findByCpf(cpf).isPresent()) {
             throw new Conflict("Cpf Já existente");
+        }
+    }
+
+    private void validateEmail(String email) {
+        log.info("Entering validateEmail()");
+        if (clientRepository.findByEmail(email).isPresent()) {
+            throw new Conflict("Email já existente");
+        }
+    }
+
+    private void validateAge(ClientRequestDTO clientRequestDTO) {
+        log.info("Entering validateAge()");
+        if (Period.between(clientRequestDTO.dateOfBirth(), LocalDate.now()).getYears() < 18) {
+            throw new UnprocessableEntity("Invalid date of birth");
         }
     }
 

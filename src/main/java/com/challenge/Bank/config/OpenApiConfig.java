@@ -15,7 +15,6 @@ public class OpenApiConfig {
                         .title("Application for banking transactions and statistics search")
                         .version("v1")
                         .description("With this application, it is possible to manipulate data like in a bank transaction and retrieve your statistics for a customized time period.")
-
                 );
     }
 

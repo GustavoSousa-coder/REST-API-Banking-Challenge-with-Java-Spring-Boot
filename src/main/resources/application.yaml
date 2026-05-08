@@ -19,3 +19,7 @@ logging:
   level:
     root: INFO
     org.hibernate.SQL: DEBUG
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}

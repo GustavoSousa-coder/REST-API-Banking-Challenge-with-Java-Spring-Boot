@@ -5,7 +5,7 @@ CREATE TABLE tb_clients (
     email VARCHAR(100) UNIQUE NOT NULL,
     date_of_birth DATE NOT NULL,
     password VARCHAR(100),
-    client_status INT DEFAULT 0,
+    client_status VARCHAR(20) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -15,8 +15,8 @@ CREATE TABLE tb_accounts (
     agency_number VARCHAR(10) NOT NULL,
     balance DECIMAL(19, 2) DEFAULT 0.00,
     overdraft_limit DECIMAL(19, 2) DEFAULT 0.00,
-    status INT DEFAULT 0,
-    type INT DEFAULT 0,
+    status VARCHAR(20) DEFAULT 0,
+    type VARCHAR(20) DEFAULT 0,
     client_id BINARY(16),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_client_account FOREIGN KEY (client_id) REFERENCES tb_clients(uuid)
@@ -34,7 +34,7 @@ CREATE TABLE tb_transactions (
     uuid BINARY(16) PRIMARY KEY,
     amount DECIMAL(19, 2) NOT NULL,
     data_hora TIMESTAMP NOT NULL,
-    status INT DEFAULT 0,
+    status VARCHAR(20) DEFAULT 0,
     transaction_type VARCHAR(30) NOT NULL,
     sender_account_id BINARY(16),
     receiver_account_id BINARY(16),

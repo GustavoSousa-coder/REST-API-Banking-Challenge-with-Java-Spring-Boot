@@ -58,7 +58,7 @@ public class AccountService {
         var client = clientRepository.findById(clientUuid)
                 .orElseThrow(() -> new UnprocessableEntity("Client not found"));
         entity.setClient(client);
-        if (client.getClientStatus() != ClientStatus.Active) { throw new UnprocessableEntity("Client is not active"); }
+        if (client.getClientStatus() != ClientStatus.ACTIVE) { throw new UnprocessableEntity("Client is not active"); }
         var accountSave = accountRepository.save(entity);
         log.info("Save account");
         return accountMapper.ToDTO(accountSave);
