@@ -1,6 +1,7 @@
 package com.challenge.Bank.transactions.service;
 
 import com.challenge.Bank.Enums.AccountStatus;
+import com.challenge.Bank.Enums.AccountType;
 import com.challenge.Bank.Enums.TransactionStatus;
 import com.challenge.Bank.Enums.TransactionType;
 import com.challenge.Bank.accounts.model.Account;
@@ -25,7 +26,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static java.time.OffsetDateTime.now;
 
 @Service
 public class TransactionService {
@@ -45,27 +45,39 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionResponseDTO save(UUID accountId, TransactionRequestDTO dto) {
+    public TransactionResponseDTO transfer(UUID accountId, TransactionRequestDTO dto) {
         log.info("Saving transaction");
 
-        var entity = transactionMapper.toEntity(dto);
-
         var valor = dto.amount();
-        if (valor == null || valor.compareTo(BigDecimal.ZERO) < 0) { throw new BadRequest("Error relational in value is negative"); }
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequest("Error relational in value is negative");
+        }
 
         var senderAccount = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NotFound("Account not found"));
-        if (senderAccount.getBalance().compareTo(dto.amount()) < 0 ) { throw new UnprocessableEntity("Error relational in value is negative"); }
 
         AddressKey key = addressKeyRepository.findByKeyValue(dto.key());
-        if (key == null) { throw  new NotFound("Address key not found"); }
+        if (key == null) {
+            throw  new NotFound("Address key not found");
+        }
 
         Account receiver = key.getAccount();
-        if (senderAccount.getUuid().equals(receiver.getUuid())) { throw new UnprocessableEntity("Error relational in sender account"); }
+        if (senderAccount.getUuid().equals(receiver.getUuid())) {
+            throw new UnprocessableEntity("Error relational in sender account");
+        }
 
-        if (senderAccount.getStatus() != AccountStatus.ACTIVE || receiver.getStatus() != AccountStatus.ACTIVE) { throw new UnprocessableEntity("Error relational in account not active"); }
+        if (senderAccount.getStatus() != AccountStatus.ACTIVE || receiver.getStatus() != AccountStatus.ACTIVE) {
+            throw new UnprocessableEntity("Error relational in account not active");
+        }
 
-        senderAccount.debit(valor);
+        if (senderAccount.getType() == AccountType.CORRENTE) {
+            senderAccount.executeWithdrawalCorrente(valor);
+            senderAccount.debit(valor);
+        } else {
+            senderAccount.executeWithdrawalPoupanca();
+            senderAccount.debit(valor);
+        }
+
         receiver.creditor(valor);
 
         Transaction transaction = Transaction.builder()
@@ -76,6 +88,8 @@ public class TransactionService {
                 .receiverAccount(receiver)
                 .build();
 
+        accountRepository.save(senderAccount);
+        accountRepository.save(receiver);
         var saved = transactionRepository.save(transaction);
         return transactionMapper.toDTO(saved);
     }

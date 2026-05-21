@@ -16,34 +16,32 @@ Na fase inicial, a aplicação foi desenvolvida sob premissas específicas para 
 
 ## Status do Projeto
 
-**Versão Atual:** 1.4.0 (Autenticação JWT e Fortalecimento de Segurança)
+**Versão Atual:** 1.5.0 (Regras de Negócio Bancário e Validações de Conta)
 
-**Descrição:** Nessa versão implementamos autenticação stateless via JWT com Spring Security, fortalecemos as validações de entrada com anotações customizadas e reorganizamos responsabilidades entre as camadas da aplicação.
+**Descrição:** Nessa versão implementamos regras de negócio reais por tipo de conta, corrigimos falhas de lógica no fluxo de transações e fortalecemos as validações de criação de contas seguindo padrões do mercado financeiro.
 
 ### Principais Melhorias desta Versão:
 
-**Autenticação JWT com Spring Security**
-Implementação completa do fluxo de autenticação stateless. O cliente se autentica via email e senha, recebe um token JWT assinado com HMAC256 e o utiliza nas requisições subsequentes. O token carrega a identidade e as permissões do usuário, eliminando a necessidade de sessão no servidor.
+**Limite de Contas por Cliente**
+Um cliente agora pode ter no máximo duas contas — uma corrente e uma poupança. Validação implementada no `AccountService` verificando quantidade e tipo antes de persistir, lançando `Conflict` em caso de violação.
 
-**Autorização por Roles**
-Controle de acesso granular por perfil com `ROLE_CLIENT` e `ROLE_ADMIN`. Endpoints sensíveis como listagem global de clientes e estatísticas são restritos ao administrador, enquanto operações bancárias do próprio cliente exigem autenticação com perfil CLIENT.
+**Rich Domain Model na Entidade Account**
+A entidade `Account` passou a encapsular suas próprias regras de negócio seguindo o padrão de modelo de domínio rico. Dois métodos foram adicionados diretamente no model: `executeWithdrawalCorrente` e `executeWithdrawalPoupanca`, cada um com suas regras específicas.
 
-**Validação Customizada de CPF**
-Implementação de annotation customizada `@ValidCpf` com validação matemática completa dos dígitos verificadores seguindo o algoritmo da Receita Federal, rejeitando CPFs sintaticamente corretos mas matematicamente inválidos.
+**Regras por Tipo de Conta**
+Conta corrente considera `balance + overdraftLimit` para validar se o débito é permitido, habilitando o uso do cheque especial. Conta poupança limita a 6 transferências de saída mensais com reset automático baseado em `lastWithdrawalReset`, sem depender de agendamento externo.
 
-**Fortalecimento das Validações de Entrada**
-Adição de `@NotBlank`, `@Email`, `@Past`, `@Size` e `@Pattern` nos DTOs de cadastro. Validação de senha com regex exigindo caracteres maiúsculos, minúsculos, números e especiais. Inclusão do `spring-boot-starter-validation` para ativação do Bean Validation.
+**Correção do Fluxo de Transação**
+As contas remetente e receptora agora são persistidas após a movimentação via `accountRepository.save()`, garantindo que os saldos atualizados e o contador de saques da poupança sejam refletidos no banco de dados.
 
-**Reorganização de Responsabilidades**
-Movimentação da criptografia BCrypt do Mapper para o Service, alinhando a lógica de segurança à camada correta. Separação entre `AuthenticationService` (orquestra o login), `UserDetailsServiceImpl` (contrato do Spring Security) e `TokenService` (geração e validação do JWT).
-
-**Integração do Client com UserDetails**
-A entidade `Client` implementa `UserDetails` do Spring Security, expondo `getAuthorities()` baseado na role, `isEnabled()` vinculado ao `ClientStatus` e `isAccountNonLocked()` verificando status `BLOCKED` e `SUSPICIOUS`.
+**Correção do findAllByClientId**
+O método que buscava todas as contas independente do cliente foi corrigido para filtrar corretamente pelo UUID do cliente usando `findByClientUuid` no repository, retornando apenas as contas do cliente informado.
 
 ---
 
 ## Próximas Etapas
-- **Funcionalidades:** Limite diário de transações, extrato por período, transferência atômica entre contas.
+- **Estatísticas:** Melhorar precisão financeira com BigDecimal e filtrar por cliente autenticado.
+- **Funcionalidades:** Extrato por período, limite diário de transações.
 - **Segurança:** Rate limiting no endpoint de login contra ataques de força bruta.
 - **Qualidade:** Cobertura de testes unitários nos services.
-- **Documentação:** Refinamento do Swagger/OpenAPI e README final.
+- **Documentação:** Refinamento do Swagger/OpenAPI

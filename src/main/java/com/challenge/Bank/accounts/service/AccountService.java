@@ -5,9 +5,9 @@ import com.challenge.Bank.Enums.ClientStatus;
 import com.challenge.Bank.accounts.DTO.AccountRequestDTO;
 import com.challenge.Bank.accounts.DTO.AccountResponseDTO;
 import com.challenge.Bank.accounts.mapper.AccountMapper;
-import com.challenge.Bank.accounts.model.Account;
 import com.challenge.Bank.accounts.repository.AccountRepository;
 import com.challenge.Bank.clients.repository.ClientRepository;
+import com.challenge.Bank.exceptions.Conflict;
 import com.challenge.Bank.exceptions.NotFound;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -38,8 +37,8 @@ public class AccountService {
         clientRepository.findById(clientUuid)
                 .orElseThrow(() -> new NotFound("client not found"));
 
-        return accountRepository
-                .findAll().stream()
+        return accountRepository.findByClientUuid(clientUuid)
+                .stream()
                 .map(accountMapper::ToDTO)
                 .toList();
     }
@@ -53,14 +52,35 @@ public class AccountService {
     }
 
     public AccountResponseDTO saveAccount(AccountRequestDTO accountRequestDTO, UUID clientUuid) {
-        if(clientUuid == null) { throw new  IllegalArgumentException("Client id is null"); }
-        var entity = accountMapper.ToEntity(accountRequestDTO);
+
+        if(clientUuid == null) {throw new  IllegalArgumentException("Client id is null");}
+
         var client = clientRepository.findById(clientUuid)
                 .orElseThrow(() -> new UnprocessableEntity("Client not found"));
+
+        if (client.getClientStatus() != ClientStatus.ACTIVE) {throw new UnprocessableEntity("Client is not active");}
+
+        var list = findAllByClientId(clientUuid);
+
+        if (list.size() >= 2) {throw new Conflict("Limite de contas excedidos");}
+
+        var validationAccountType = list.stream().anyMatch(
+                        AccountResponseDTO -> AccountResponseDTO
+                                .type()
+                                .equals(accountRequestDTO
+                                        .type()
+                                )
+        );
+        if (validationAccountType) {throw new Conflict("Cliente já possui uma conta desse tipo");}
+
+        var entity = accountMapper.ToEntity(accountRequestDTO);
+
         entity.setClient(client);
-        if (client.getClientStatus() != ClientStatus.ACTIVE) { throw new UnprocessableEntity("Client is not active"); }
+
         var accountSave = accountRepository.save(entity);
+
         log.info("Save account");
+
         return accountMapper.ToDTO(accountSave);
     }
 

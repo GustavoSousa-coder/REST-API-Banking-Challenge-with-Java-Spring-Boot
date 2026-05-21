@@ -2,9 +2,6 @@ package com.challenge.Bank.statistics.controller;
 
 import com.challenge.Bank.statistics.DTO.StatisticsResponseDTO;
 import com.challenge.Bank.statistics.service.StatisticsService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping("/api/v1/estatistica")

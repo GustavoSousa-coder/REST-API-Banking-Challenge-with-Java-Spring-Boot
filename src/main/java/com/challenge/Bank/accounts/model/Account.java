@@ -3,14 +3,17 @@ package com.challenge.Bank.accounts.model;
 import com.challenge.Bank.Enums.AccountStatus;
 import com.challenge.Bank.Enums.AccountType;
 import com.challenge.Bank.clients.model.Client;
+import com.challenge.Bank.exceptions.UnprocessableEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-
+@Slf4j
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,7 +46,7 @@ public class Account {
 
     @Builder.Default
     @Column(name = "overdraft_limit", nullable = false, precision = 19, scale = 2)
-    private BigDecimal overdraftLimit =  BigDecimal.valueOf(1.000);
+    private BigDecimal overdraftLimit =  BigDecimal.valueOf(1000);
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -60,11 +63,42 @@ public class Account {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @Builder.Default
+    @Column(name = "withdrawal_count", nullable = false)
+    private Integer withdrawalCount = 0;
+
+    @Builder.Default
+    @Column(name = "last_withdrawal_reset", nullable = false)
+    private LocalDate lastWithdrawalReset = LocalDate.now();
+
     public void debit(BigDecimal valor) {
         this.balance = balance.subtract(valor);
     }
 
     public void creditor(BigDecimal valor) {
         this.balance = balance.add(valor);
+    }
+
+    public void executeWithdrawalCorrente(BigDecimal amount) {
+        if (amount.compareTo(balance.add(overdraftLimit)) > 0) {
+            throw new UnprocessableEntity("Valor indisponível");
+        }
+    }
+
+    public void executeWithdrawalPoupanca() {
+
+        if (lastWithdrawalReset.getMonth() != LocalDate.now().getMonth() ||
+            lastWithdrawalReset.getYear() != LocalDate.now().getYear()
+        ) {
+            lastWithdrawalReset = LocalDate.now();
+            withdrawalCount = 0;
+        }
+
+        if (withdrawalCount < 6) {
+            withdrawalCount ++;
+        } else {
+            throw new UnprocessableEntity("limite de transação excedido");
+        }
+
     }
 }
