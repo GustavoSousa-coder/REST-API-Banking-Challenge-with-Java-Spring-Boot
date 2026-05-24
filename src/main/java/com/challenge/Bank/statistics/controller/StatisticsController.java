@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/v1/estatistica")
@@ -23,7 +25,7 @@ public class StatisticsController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StatisticsResponseDTO> constructorStatistics(
             @RequestParam(value = "TimeSearch", required = false, defaultValue = "60") Integer TimeSearch) {
-        return ResponseEntity.ok(statisticsService.calcularStatistics(TimeSearch));
+        return ResponseEntity.of(statisticsService.calcularStatistics(TimeSearch));
     }
 
 }

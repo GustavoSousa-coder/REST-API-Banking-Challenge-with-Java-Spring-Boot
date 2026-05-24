@@ -1,5 +1,6 @@
 package com.challenge.Bank.transactions.repository;
 
+import com.challenge.Bank.transactions.DTO.TransactionResponseDTO;
 import com.challenge.Bank.transactions.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

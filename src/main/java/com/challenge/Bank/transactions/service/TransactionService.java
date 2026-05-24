@@ -94,11 +94,15 @@ public class TransactionService {
         return transactionMapper.toDTO(saved);
     }
 
-    public List<Transaction> getTransactionByTime(Integer TimeSearch) {
+    public List<TransactionResponseDTO> getTransactionByTime(Integer TimeSearch) {
         log.info("Getting transaction by time");
         OffsetDateTime dataHoraTimeSearch = OffsetDateTime.now().minusSeconds(TimeSearch);
         log.info("return of transaction");
-        return transactionRepository.findRecentTransactions(dataHoraTimeSearch);
+
+        return transactionRepository.findRecentTransactions(dataHoraTimeSearch)
+                .stream()
+                .map(transactionMapper::toDTO)
+                .toList();
     }
 
 }

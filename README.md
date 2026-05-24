@@ -16,32 +16,29 @@ Na fase inicial, a aplicação foi desenvolvida sob premissas específicas para 
 
 ## Status do Projeto
 
-**Versão Atual:** 1.5.0 (Regras de Negócio Bancário e Validações de Conta)
+**Versão Atual:** 1.5.1 (Refatoração de Estatísticas e Consistência de DTOs)
 
-**Descrição:** Nessa versão implementamos regras de negócio reais por tipo de conta, corrigimos falhas de lógica no fluxo de transações e fortalecemos as validações de criação de contas seguindo padrões do mercado financeiro.
+**Descrição:** Versão de refatoração focada em corrigir inconsistências nos DTOs, melhorar a precisão financeira das estatísticas e alinhar o fluxo de dados entre as camadas da aplicação.
 
 ### Principais Melhorias desta Versão:
 
-**Limite de Contas por Cliente**
-Um cliente agora pode ter no máximo duas contas — uma corrente e uma poupança. Validação implementada no `AccountService` verificando quantidade e tipo antes de persistir, lançando `Conflict` em caso de violação.
+**Precisão Financeira nas Estatísticas**
+Substituição do `DoubleSummaryStatistics` por cálculos manuais com `BigDecimal`, eliminando erros de arredondamento em valores financeiros. As operações de soma, média, mínimo e máximo agora usam `reduce`, `min` e `max` do Stream API com `BigDecimal::compareTo`.
 
-**Rich Domain Model na Entidade Account**
-A entidade `Account` passou a encapsular suas próprias regras de negócio seguindo o padrão de modelo de domínio rico. Dois métodos foram adicionados diretamente no model: `executeWithdrawalCorrente` e `executeWithdrawalPoupanca`, cada um com suas regras específicas.
+**StatisticsResponseDTO migrado para Record**
+O DTO de estatísticas foi convertido para record, alinhando com o padrão já adotado nos demais DTOs da aplicação e eliminando getters, setters e construtores manuais desnecessários.
 
-**Regras por Tipo de Conta**
-Conta corrente considera `balance + overdraftLimit` para validar se o débito é permitido, habilitando o uso do cheque especial. Conta poupança limita a 6 transferências de saída mensais com reset automático baseado em `lastWithdrawalReset`, sem depender de agendamento externo.
+**Resposta 204 para Estatísticas Vazias**
+Quando não há transações no período consultado a API agora retorna `204 No Content` em vez de um objeto vazio. O service retorna `Optional<StatisticsResponseDTO>` e o controller usa `ResponseEntity.of()` para tratar os dois casos automaticamente.
 
-**Correção do Fluxo de Transação**
-As contas remetente e receptora agora são persistidas após a movimentação via `accountRepository.save()`, garantindo que os saldos atualizados e o contador de saques da poupança sejam refletidos no banco de dados.
-
-**Correção do findAllByClientId**
-O método que buscava todas as contas independente do cliente foi corrigido para filtrar corretamente pelo UUID do cliente usando `findByClientUuid` no repository, retornando apenas as contas do cliente informado.
+**Correção do Retorno de Transações por Período**
+O repository `findRecentTransactions` foi corrigido para retornar `List<Transaction>` em vez de `List<TransactionResponseDTO>`, respeitando a separação de camadas. A conversão para DTO agora acontece no service via mapper.
 
 ---
 
 ## Próximas Etapas
-- **Estatísticas:** Melhorar precisão financeira com BigDecimal e filtrar por cliente autenticado.
+- **Estatísticas:** Filtrar por cliente autenticado com dados personalizados por período.
 - **Funcionalidades:** Extrato por período, limite diário de transações.
 - **Segurança:** Rate limiting no endpoint de login contra ataques de força bruta.
 - **Qualidade:** Cobertura de testes unitários nos services.
-- **Documentação:** Refinamento do Swagger/OpenAPI
+- **Documentação:** Refinamento do Swagger/OpenAPI.

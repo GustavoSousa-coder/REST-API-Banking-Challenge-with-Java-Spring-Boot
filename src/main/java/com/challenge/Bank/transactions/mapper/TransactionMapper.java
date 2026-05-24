@@ -16,7 +16,6 @@ public class TransactionMapper {
 
     public TransactionResponseDTO toDTO(Transaction transaction) {
         return new TransactionResponseDTO(
-                transaction.getUuid(),
                 transaction.getAmount(),
                 transaction.getDataHora()
         );

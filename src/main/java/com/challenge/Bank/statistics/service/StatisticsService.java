@@ -1,12 +1,15 @@
 package com.challenge.Bank.statistics.service;
 
 import com.challenge.Bank.statistics.DTO.StatisticsResponseDTO;
+import com.challenge.Bank.transactions.DTO.TransactionResponseDTO;
 import com.challenge.Bank.transactions.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.DoubleSummaryStatistics;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Optional;
 
 @Service
 public class StatisticsService {
@@ -18,7 +21,7 @@ public class StatisticsService {
         this.transactionService = transactionService;
     }
 
-    public StatisticsResponseDTO calcularStatistics(Integer TimeSearch) {
+    public Optional<StatisticsResponseDTO> calcularStatistics(Integer TimeSearch) {
         log.info("Extract Statistics");
 
         long start = System.currentTimeMillis();
@@ -26,23 +29,33 @@ public class StatisticsService {
         var transactions = transactionService.getTransactionByTime(TimeSearch);
 
         if (transactions.isEmpty()) {
-            return new StatisticsResponseDTO();
+            return Optional.empty();
         }
 
-        DoubleSummaryStatistics statisticsTransactions = transactions.stream()
-                .mapToDouble(t -> t.getAmount().doubleValue()).summaryStatistics();
+        long count = transactions.size();
+
+        BigDecimal sum = transactions.stream()
+                .map(TransactionResponseDTO::amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal avg = sum.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+
+        BigDecimal min = transactions.stream()
+                .map(TransactionResponseDTO::amount)
+                .min(BigDecimal::compareTo)
+                .orElse(BigDecimal.ZERO);
+
+        BigDecimal max = transactions.stream()
+                .map(TransactionResponseDTO::amount)
+                .max(BigDecimal::compareTo)
+                .orElse(BigDecimal.ZERO);
+
 
         long end = System.currentTimeMillis();
         long timeRequest = end - start;
         log.info("Extract Statistics Time: {}", timeRequest);
 
-
-        return new StatisticsResponseDTO(
-                statisticsTransactions.getCount(),
-                statisticsTransactions.getSum(),
-                statisticsTransactions.getAverage(),
-                statisticsTransactions.getMin(),
-                statisticsTransactions.getMax());
+        return Optional.of(new StatisticsResponseDTO(count, sum, avg, min, max));
     }
 
 }
