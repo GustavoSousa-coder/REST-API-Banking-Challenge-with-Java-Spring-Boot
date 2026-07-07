@@ -1,4 +1,9 @@
 package com.challenge.Bank.clients.DTO;
 
-public record AuthenticationResponseDTO(String token) {
+import java.util.UUID;
+
+public record AuthenticationResponseDTO(
+        String token,
+        UUID uuid
+) {
 }
