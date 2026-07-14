@@ -11,6 +11,7 @@ import com.challenge.Bank.addressKey.repository.AddressKeyRepository;
 import com.challenge.Bank.exceptions.BadRequest;
 import com.challenge.Bank.exceptions.NotFound;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
+import com.challenge.Bank.transactions.DTO.TimeFilterDTO;
 import com.challenge.Bank.transactions.mapper.TransactionMapper;
 import com.challenge.Bank.transactions.DTO.TransactionRequestDTO;
 import com.challenge.Bank.transactions.DTO.TransactionResponseDTO;
@@ -22,8 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -94,12 +100,46 @@ public class TransactionService {
         return transactionMapper.toDTO(saved);
     }
 
-    public List<TransactionResponseDTO> getTransactionByTime(Integer TimeSearch) {
+    public List<TransactionResponseDTO> getTransactionByTime(UUID accountId, Integer TimeSearch) {
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFound("Account not found"));
         log.info("Getting transaction by time");
         OffsetDateTime dataHoraTimeSearch = OffsetDateTime.now().minusSeconds(TimeSearch);
         log.info("return of transaction");
 
         return transactionRepository.findRecentTransactions(dataHoraTimeSearch)
+                .stream()
+                .map(transactionMapper::toDTO)
+                .toList();
+    }
+
+        public List<TransactionResponseDTO> getTransactionByPersonaliseTime (UUID accountId, TimeFilterDTO filter) {
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFound("Account not found"));
+
+        log.info("Getting transactions by time: {}", filter);
+
+        ZoneId zone = Optional.ofNullable(filter.zone()).orElse(ZoneId.systemDefault());
+        OffsetDateTime from;
+
+        switch (filter.type()) {
+            case SECONDS -> from = OffsetDateTime.now().minusSeconds(filter.amount());
+            case DAYS -> from = OffsetDateTime.now().minusDays(filter.amount());
+            case MONTHS -> from = OffsetDateTime.now().minusMonths(filter.amount());
+            case YEARS -> from = OffsetDateTime.now().minusYears(filter.amount());
+            case FROM_DATE -> {
+                LocalDate localStart;
+                try {
+                    localStart = LocalDate.parse(filter.dateIso(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("dateIso inválido, use dd/MM/yyyy", e);
+                }
+                from = localStart.atStartOfDay(zone).toOffsetDateTime();
+            }
+            default -> throw new IllegalStateException("Tipo inválido");
+        }
+
+        return transactionRepository.findRecentTransactions(from)
                 .stream()
                 .map(transactionMapper::toDTO)
                 .toList();

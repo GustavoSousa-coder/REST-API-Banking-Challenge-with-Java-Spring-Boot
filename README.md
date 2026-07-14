@@ -16,29 +16,20 @@ Na fase inicial, a aplicação foi desenvolvida sob premissas específicas para 
 
 ## Status do Projeto
 
-**Versão Atual:** 1.5.1 (Refatoração de Estatísticas e Consistência de DTOs)
+**Versão Atual:** 1.5.2 (Adição de novas formas de Abstrair extratos por um período de tempo personalizado)
 
-**Descrição:** Versão de refatoração focada em corrigir inconsistências nos DTOs, melhorar a precisão financeira das estatísticas e alinhar o fluxo de dados entre as camadas da aplicação.
+**Descrição:** 
+Essa versão introduz melhorias na forma de extrair extratos ou históricos de transações, permitindo que o cliente possa extrair usando o filtro de segundos, dias ou até messes.
 
 ### Principais Melhorias desta Versão:
 
-**Precisão Financeira nas Estatísticas**
-Substituição do `DoubleSummaryStatistics` por cálculos manuais com `BigDecimal`, eliminando erros de arredondamento em valores financeiros. As operações de soma, média, mínimo e máximo agora usam `reduce`, `min` e `max` do Stream API com `BigDecimal::compareTo`.
+Adição de um novo enumerate `TimeUnitType` para definir as unidades de tempo disponíveis para filtragem de transações.
 
-**StatisticsResponseDTO migrado para Record**
-O DTO de estatísticas foi convertido para record, alinhando com o padrão já adotado nos demais DTOs da aplicação e eliminando getters, setters e construtores manuais desnecessários.
-
-**Resposta 204 para Estatísticas Vazias**
-Quando não há transações no período consultado a API agora retorna `204 No Content` em vez de um objeto vazio. O service retorna `Optional<StatisticsResponseDTO>` e o controller usa `ResponseEntity.of()` para tratar os dois casos automaticamente.
-
-**Correção do Retorno de Transações por Período**
-O repository `findRecentTransactions` foi corrigido para retornar `List<Transaction>` em vez de `List<TransactionResponseDTO>`, respeitando a separação de camadas. A conversão para DTO agora acontece no service via mapper.
+implementação de um novo endpoint `"/{accountId}/personalise"` que permite a extração de transações com base em um período de tempo personalizado, utilizando o `TimeUnitType` para especificar a unidade de tempo desejada.
 
 ---
 
 ## Próximas Etapas
-- **Estatísticas:** Filtrar por cliente autenticado com dados personalizados por período.
-- **Funcionalidades:** Extrato por período, limite diário de transações.
-- **Segurança:** Rate limiting no endpoint de login contra ataques de força bruta.
+- **Novas Funcionalidades:** novas funcionalidades virão juntamente com o desenvolvimento do aplicativo no qual consumirá a API, como a completa implementação e uso das estatisticas e de metodos gerados.
 - **Qualidade:** Cobertura de testes unitários nos services.
 - **Documentação:** Refinamento do Swagger/OpenAPI.

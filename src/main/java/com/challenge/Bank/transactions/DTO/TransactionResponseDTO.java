@@ -7,5 +7,4 @@ public record TransactionResponseDTO(
         BigDecimal amount,
         OffsetDateTime dataHora
 ) {
-
 }
