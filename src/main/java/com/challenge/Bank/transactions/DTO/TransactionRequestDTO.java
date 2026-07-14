@@ -1,5 +1,7 @@
 package com.challenge.Bank.transactions.DTO;
 
+import com.challenge.Bank.Enums.TransactionMethod;
+import com.challenge.Bank.card.DTO.CardTransactionRequestDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,6 +14,9 @@ public record TransactionRequestDTO(
         @Positive
         BigDecimal amount,
         @NotBlank
-        String key
+        String key,
+        TransactionMethod method,
+
+        CardTransactionRequestDTO cardDto
 ) {}
 

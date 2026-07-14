@@ -16,20 +16,29 @@ Na fase inicial, a aplicação foi desenvolvida sob premissas específicas para 
 
 ## Status do Projeto
 
-**Versão Atual:** 1.5.2 (Adição de novas formas de Abstrair extratos por um período de tempo personalizado)
+**Versão Atual:** 1.6 (Adição de nova geração de transações via cartão, e gerção de um cartão virtual quando o cliente desejar)
 
 **Descrição:** 
-Essa versão introduz melhorias na forma de extrair extratos ou históricos de transações, permitindo que o cliente possa extrair usando o filtro de segundos, dias ou até messes.
+Nessa Atualização houveram mudanças significativas na estrutura do projeto,
+como a simplificação do tipo de conta, como este repositório tem cunho de desafiio de demonstração de habilidades não existe necessidade de uma vasta estrutura nisso retirei o accountType para que o client etenha uma unica conta,
+o foco não é aproximação do mercado real quando refiro a simplificação.
+outra mudança significativa foi a adição de um novo endpoint que permite criar um cartão virtual para o cliente, e a geração de transações via cartão, que permite ao cliente gerar transações de forma simples.
+O cartão é gerado automaticamente pela API contendo:
 
-### Principais Melhorias desta Versão:
+- Número do cartão;
+- CVV;
+- Data de validade;
+- Titular;
+- Status de ativação;
+- Conta vinculada.
 
-Adição de um novo enumerate `TimeUnitType` para definir as unidades de tempo disponíveis para filtragem de transações.
+A criação do cartão é realizada pelo sistema, evitando que o usuário informe manualmente dados sensíveis.
 
-implementação de um novo endpoint `"/{accountId}/personalise"` que permite a extração de transações com base em um período de tempo personalizado, utilizando o `TimeUnitType` para especificar a unidade de tempo desejada.
+outra mudança foi a alterção do nome da chave de endereço de transferência que agora referece a Pix para diferenciar do outro metodo de transferência card.
+
 
 ---
 
-## Próximas Etapas
-- **Novas Funcionalidades:** novas funcionalidades virão juntamente com o desenvolvimento do aplicativo no qual consumirá a API, como a completa implementação e uso das estatisticas e de metodos gerados.
+## Próximas Etapas finais do projeto
 - **Qualidade:** Cobertura de testes unitários nos services.
 - **Documentação:** Refinamento do Swagger/OpenAPI.

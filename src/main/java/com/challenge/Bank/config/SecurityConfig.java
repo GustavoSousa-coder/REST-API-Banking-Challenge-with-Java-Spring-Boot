@@ -48,11 +48,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/{clientUuid}").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/account/{uuid}").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/api/v1/addressKey/{accountId}").hasRole("CLIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/pix/{accountId}").hasRole("CLIENT")
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/card/{accountId}").hasRole("CLIENT")
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/estatistica").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/transacao/{accountId}").hasRole("CLIENT")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/transacao/{accountId}").hasRole("CLIENT")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/transacao/{accountId}/personalise").hasRole("CLIENT")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -64,14 +64,6 @@ public class AccountService {
 
         if (list.size() >= 2) {throw new Conflict("Limite de contas excedidos");}
 
-        var validationAccountType = list.stream().anyMatch(
-                        AccountResponseDTO -> AccountResponseDTO
-                                .type()
-                                .equals(accountRequestDTO
-                                        .type()
-                                )
-        );
-        if (validationAccountType) {throw new Conflict("Cliente já possui uma conta desse tipo");}
 
         var entity = accountMapper.ToEntity(accountRequestDTO);
 
@@ -91,4 +83,5 @@ public class AccountService {
         search.setStatus(AccountStatus.CLOSED);
         accountMapper.ToDTO(accountRepository.save(search));
     }
+
 }

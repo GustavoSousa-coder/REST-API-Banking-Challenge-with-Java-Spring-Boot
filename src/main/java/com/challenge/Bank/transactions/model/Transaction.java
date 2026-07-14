@@ -1,5 +1,6 @@
 package com.challenge.Bank.transactions.model;
 
+import com.challenge.Bank.Enums.TransactionMethod;
 import com.challenge.Bank.Enums.TransactionStatus;
 import com.challenge.Bank.Enums.TransactionType;
 import com.challenge.Bank.accounts.model.Account;
@@ -48,5 +49,9 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_account_id")
     private Account receiverAccount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "method", nullable = false)
+    private TransactionMethod method;
 
 }

@@ -1,7 +1,6 @@
 package com.challenge.Bank.accounts.model;
 
 import com.challenge.Bank.Enums.AccountStatus;
-import com.challenge.Bank.Enums.AccountType;
 import com.challenge.Bank.clients.model.Client;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
 import jakarta.persistence.*;
@@ -39,11 +38,6 @@ public class Account {
     @Column(name = "balance", nullable = false, precision = 19, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @Enumerated(EnumType.STRING)
-    @Setter(AccessLevel.PUBLIC)
-    @Column(name = "type", unique = false, nullable = false,  length = 10)
-    private AccountType type;
-
     @Builder.Default
     @Column(name = "overdraft_limit", nullable = false, precision = 19, scale = 2)
     private BigDecimal overdraftLimit =  BigDecimal.valueOf(1000);
@@ -71,6 +65,18 @@ public class Account {
     @Column(name = "last_withdrawal_reset", nullable = false)
     private LocalDate lastWithdrawalReset = LocalDate.now();
 
+    @Column(name = "daily_transfer_limit", nullable = false, precision = 19, scale = 2)
+    @Builder.Default
+    private BigDecimal dailyTransferLimit = BigDecimal.valueOf(5000);
+
+    @Column(name = "daily_transfer_used", nullable = false, precision = 19, scale = 2)
+    @Builder.Default
+    private BigDecimal dailyTransferUsed = BigDecimal.ZERO;
+
+    @Builder.Default
+    @Column(name = "last_transfer_reset", nullable = false)
+    private LocalDate lastTransferReset = LocalDate.now();
+
     public void debit(BigDecimal valor) {
         this.balance = balance.subtract(valor);
     }
@@ -79,26 +85,21 @@ public class Account {
         this.balance = balance.add(valor);
     }
 
-    public void executeWithdrawalCorrente(BigDecimal amount) {
-        if (amount.compareTo(balance.add(overdraftLimit)) > 0) {
-            throw new UnprocessableEntity("Valor indisponível");
+    public void consumeDailyTransferLimit(BigDecimal amount) {
+
+        if (!lastTransferReset.equals(LocalDate.now())) {
+            dailyTransferUsed = BigDecimal.ZERO;
+            lastTransferReset = LocalDate.now();
         }
+
+        BigDecimal total = dailyTransferUsed.add(amount);
+
+        if (total.compareTo(dailyTransferLimit) > 0) {
+            throw new UnprocessableEntity("Daily transfer limit exceeded.");
+        }
+
+        dailyTransferUsed = total;
     }
 
-    public void executeWithdrawalPoupanca() {
 
-        if (lastWithdrawalReset.getMonth() != LocalDate.now().getMonth() ||
-            lastWithdrawalReset.getYear() != LocalDate.now().getYear()
-        ) {
-            lastWithdrawalReset = LocalDate.now();
-            withdrawalCount = 0;
-        }
-
-        if (withdrawalCount < 6) {
-            withdrawalCount ++;
-        } else {
-            throw new UnprocessableEntity("limite de transação excedido");
-        }
-
-    }
 }

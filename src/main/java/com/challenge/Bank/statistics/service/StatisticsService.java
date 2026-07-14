@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class StatisticsService {
@@ -21,12 +22,12 @@ public class StatisticsService {
         this.transactionService = transactionService;
     }
 
-    public Optional<StatisticsResponseDTO> calcularStatistics(Integer TimeSearch) {
+    public Optional<StatisticsResponseDTO> calcularStatistics(UUID AccountId, Integer TimeSearch) {
         log.info("Extract Statistics");
 
         long start = System.currentTimeMillis();
 
-        var transactions = transactionService.getTransactionByTime(TimeSearch);
+        var transactions = transactionService.getTransactionByTime(AccountId, TimeSearch);
 
         if (transactions.isEmpty()) {
             return Optional.empty();

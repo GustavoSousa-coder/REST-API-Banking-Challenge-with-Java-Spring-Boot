@@ -1,0 +1,2 @@
+ALTER TABLE tb_transactions
+    ADD COLUMN method VARCHAR(20) NOT NULL DEFAULT 'PIX';

@@ -11,7 +11,6 @@ public class AccountMapper {
 
     public Account ToEntity(AccountRequestDTO dto) {
         return Account.builder()
-                .type(dto.type())
                 .build();
     }
 
@@ -20,7 +19,6 @@ public class AccountMapper {
                 account.getUuid(),
                 account.getClient().getUuid(),
                 account.getBalance(),
-                account.getType(),
                 account.getOverdraftLimit(),
                 account.getStatus()
         );

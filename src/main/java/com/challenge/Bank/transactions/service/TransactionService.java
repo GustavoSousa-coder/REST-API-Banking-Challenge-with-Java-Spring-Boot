@@ -1,13 +1,16 @@
 package com.challenge.Bank.transactions.service;
 
 import com.challenge.Bank.Enums.AccountStatus;
-import com.challenge.Bank.Enums.AccountType;
+import com.challenge.Bank.Enums.TransactionMethod;
 import com.challenge.Bank.Enums.TransactionStatus;
 import com.challenge.Bank.Enums.TransactionType;
 import com.challenge.Bank.accounts.model.Account;
 import com.challenge.Bank.accounts.repository.AccountRepository;
-import com.challenge.Bank.addressKey.model.AddressKey;
-import com.challenge.Bank.addressKey.repository.AddressKeyRepository;
+import com.challenge.Bank.PixKey.model.PixKey;
+import com.challenge.Bank.PixKey.repository.PixKeyRepository;
+import com.challenge.Bank.card.DTO.CardTransactionRequestDTO;
+import com.challenge.Bank.card.repository.CardRepository;
+import com.challenge.Bank.card.service.CardService;
 import com.challenge.Bank.exceptions.BadRequest;
 import com.challenge.Bank.exceptions.NotFound;
 import com.challenge.Bank.exceptions.UnprocessableEntity;
@@ -38,13 +41,17 @@ public class TransactionService {
 
     private final Logger log =  LoggerFactory.getLogger(TransactionService.class);
 
-    private final AddressKeyRepository addressKeyRepository;
+    private final PixKeyRepository pixKeyRepository;
+    private final CardRepository cardRepository;
+    private final CardService cardService;
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final TransactionMapper transactionMapper;
 
-    public TransactionService(AddressKeyRepository addressKeyRepository, TransactionRepository transactionRepository, AccountRepository accountRepository, TransactionMapper transactionMapper) {
-        this.addressKeyRepository = addressKeyRepository;
+    public TransactionService(PixKeyRepository pixKeyRepository, CardRepository cardRepository, CardService cardService, TransactionRepository transactionRepository, AccountRepository accountRepository, TransactionMapper transactionMapper) {
+        this.pixKeyRepository = pixKeyRepository;
+        this.cardRepository = cardRepository;
+        this.cardService = cardService;
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.transactionMapper = transactionMapper;
@@ -52,51 +59,80 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponseDTO transfer(UUID accountId, TransactionRequestDTO dto) {
+
         log.info("Saving transaction");
 
-        var valor = dto.amount();
-        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BadRequest("Error relational in value is negative");
+        if (dto.amount() == null || dto.amount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequest("Error relational in value is negative or null");
         }
 
-        var senderAccount = accountRepository.findById(accountId)
-                .orElseThrow(() -> new NotFound("Account not found"));
+        Account senderAccount;
+        Account receiverAccount;
 
-        AddressKey key = addressKeyRepository.findByKeyValue(dto.key());
-        if (key == null) {
-            throw  new NotFound("Address key not found");
+        switch (dto.method()) {
+
+            case PIX -> {
+
+                senderAccount = accountRepository.findById(accountId)
+                        .orElseThrow(() -> new NotFound("Account not found"));
+
+                PixKey key = pixKeyRepository.findByKeyValue(dto.key());
+
+                if (key == null) {
+                    throw new NotFound("Pix key not found");
+                }
+
+                receiverAccount = key.getAccount();
+            }
+
+            case CARD -> {
+
+                senderAccount = cardService.authorize(dto.cardDto());
+
+                PixKey key = pixKeyRepository.findByKeyValue(dto.key());
+
+                if (key == null) {
+                    throw new NotFound("Pix key not found");
+                }
+
+                receiverAccount = key.getAccount();
+            }
+
+            default ->
+                    throw new BadRequest("Invalid transaction method.");
+
         }
 
-        Account receiver = key.getAccount();
-        if (senderAccount.getUuid().equals(receiver.getUuid())) {
-            throw new UnprocessableEntity("Error relational in sender account");
+        if (senderAccount.getUuid().equals(receiverAccount.getUuid())) {
+            throw new UnprocessableEntity("Sender and receiver account cannot be the same.");
         }
 
-        if (senderAccount.getStatus() != AccountStatus.ACTIVE || receiver.getStatus() != AccountStatus.ACTIVE) {
-            throw new UnprocessableEntity("Error relational in account not active");
+        if (senderAccount.getStatus() != AccountStatus.ACTIVE
+                || receiverAccount.getStatus() != AccountStatus.ACTIVE) {
+
+            throw new UnprocessableEntity("Inactive account.");
         }
 
-        if (senderAccount.getType() == AccountType.CORRENTE) {
-            senderAccount.executeWithdrawalCorrente(valor);
-            senderAccount.debit(valor);
-        } else {
-            senderAccount.executeWithdrawalPoupanca();
-            senderAccount.debit(valor);
-        }
+        senderAccount.consumeDailyTransferLimit(dto.amount());
 
-        receiver.creditor(valor);
+        senderAccount.debit(dto.amount());
+
+        receiverAccount.creditor(dto.amount());
 
         Transaction transaction = Transaction.builder()
                 .transactionType(TransactionType.TRANSFER)
+                .method(dto.method())
                 .amount(dto.amount())
                 .status(TransactionStatus.COMPLETED)
                 .senderAccount(senderAccount)
-                .receiverAccount(receiver)
+                .receiverAccount(receiverAccount)
                 .build();
 
         accountRepository.save(senderAccount);
-        accountRepository.save(receiver);
-        var saved = transactionRepository.save(transaction);
+        accountRepository.save(receiverAccount);
+
+        Transaction saved = transactionRepository.save(transaction);
+
         return transactionMapper.toDTO(saved);
     }
 

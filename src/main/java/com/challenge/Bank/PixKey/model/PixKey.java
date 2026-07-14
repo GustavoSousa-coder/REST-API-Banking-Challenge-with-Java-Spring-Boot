@@ -1,4 +1,4 @@
-package com.challenge.Bank.addressKey.model;
+package com.challenge.Bank.PixKey.model;
 
 import com.challenge.Bank.Enums.KeyType;
 import com.challenge.Bank.accounts.model.Account;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Entity
 @Table(name = "tb_address_keys")
-public class AddressKey {
+public class PixKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
