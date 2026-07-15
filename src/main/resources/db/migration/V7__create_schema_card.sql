@@ -1,24 +1,13 @@
 CREATE TABLE tb_cards (
-
-                          uuid CHAR(36) NOT NULL PRIMARY KEY,
-
-                          card_number VARCHAR(16) NOT NULL UNIQUE,
-
-                          cvv VARCHAR(3) NOT NULL,
-
-                          holder_name VARCHAR(100) NOT NULL,
-
-                          expiration_month INT NOT NULL,
-
-                          expiration_year INT NOT NULL,
-
-                          status VARCHAR(20) NOT NULL,
-
-                          account_id CHAR(36) NOT NULL,
-
-                          created_at TIMESTAMP NOT NULL,
-
-                          CONSTRAINT fk_card_account
-                              FOREIGN KEY (account_id)
-                                  REFERENCES tb_accounts(uuid)
+    uuid BINARY(16) NOT NULL,
+    card_number VARCHAR(16) NOT NULL,
+    cvv VARCHAR(3) NOT NULL,
+    holder_name VARCHAR(255) NOT NULL,
+    expiration_date VARBINARY(255) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    account_id BINARY(16),
+    created_at DATETIME(6) NOT NULL,
+    PRIMARY KEY (uuid),
+    UNIQUE KEY uq_card_number (card_number),
+    CONSTRAINT fk_cards_account FOREIGN KEY (account_id) REFERENCES tb_accounts(uuid) ON DELETE CASCADE
 );

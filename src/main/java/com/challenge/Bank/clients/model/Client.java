@@ -72,7 +72,7 @@ public class Client implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() { // TODO adicionar lógica funcional por precisar de um campo especifico
+    public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
     }
 
@@ -83,7 +83,7 @@ public class Client implements UserDetails {
     }
 
     @Override
-    public boolean isCredentialsNonExpired() { // TODO adicionar lógica funcional por precisar de lógica extra
+    public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
     }
 

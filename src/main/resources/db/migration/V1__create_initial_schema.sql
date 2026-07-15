@@ -22,7 +22,7 @@ CREATE TABLE tb_accounts (
     CONSTRAINT fk_client_account FOREIGN KEY (client_id) REFERENCES tb_clients(uuid)
 );
 
-CREATE TABLE tb_address_keys (
+CREATE TABLE tb_pix_keys (
     uuid BINARY(16) PRIMARY KEY,
     key_type VARCHAR(20) NOT NULL,
     key_value VARCHAR(100) UNIQUE NOT NULL,

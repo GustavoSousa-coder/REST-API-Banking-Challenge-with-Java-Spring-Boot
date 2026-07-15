@@ -1,6 +1,5 @@
 package com.challenge.Bank.accounts.controller;
 
-import com.challenge.Bank.accounts.DTO.AccountRequestDTO;
 import com.challenge.Bank.accounts.DTO.AccountResponseDTO;
 import com.challenge.Bank.accounts.service.AccountService;
 import org.springframework.http.MediaType;
@@ -29,9 +28,9 @@ public class AccountController {
         return ResponseEntity.ok(accountService.findById(uuid));
     }
 
-    @PostMapping(value = "/{clientUuid}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AccountResponseDTO save(@PathVariable UUID clientUuid, @RequestBody AccountRequestDTO accountRequestDTO) {
-        return accountService.saveAccount(accountRequestDTO, clientUuid);
+    @PostMapping(value = "/{clientUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public AccountResponseDTO save(@PathVariable UUID clientUuid) {
+        return accountService.saveAccount(clientUuid);
     }
 
     @DeleteMapping(value = "/{uuid}")

@@ -2,7 +2,6 @@ package com.challenge.Bank.accounts.service;
 
 import com.challenge.Bank.Enums.AccountStatus;
 import com.challenge.Bank.Enums.ClientStatus;
-import com.challenge.Bank.accounts.DTO.AccountRequestDTO;
 import com.challenge.Bank.accounts.DTO.AccountResponseDTO;
 import com.challenge.Bank.accounts.mapper.AccountMapper;
 import com.challenge.Bank.accounts.repository.AccountRepository;
@@ -51,24 +50,19 @@ public class AccountService {
                 .orElseThrow(() -> new NotFound("Account not found"));
     }
 
-    public AccountResponseDTO saveAccount(AccountRequestDTO accountRequestDTO, UUID clientUuid) {
+    public AccountResponseDTO saveAccount(UUID clientUuid) {
 
         if(clientUuid == null) {throw new  IllegalArgumentException("Client id is null");}
 
         var client = clientRepository.findById(clientUuid)
                 .orElseThrow(() -> new UnprocessableEntity("Client not found"));
-
         if (client.getClientStatus() != ClientStatus.ACTIVE) {throw new UnprocessableEntity("Client is not active");}
 
         var list = findAllByClientId(clientUuid);
-
         if (list.size() >= 2) {throw new Conflict("Limite de contas excedidos");}
 
-
-        var entity = accountMapper.ToEntity(accountRequestDTO);
-
+        var entity = accountMapper.ToEntity(client);
         entity.setClient(client);
-
         var accountSave = accountRepository.save(entity);
 
         log.info("Save account");

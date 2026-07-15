@@ -1,6 +1,5 @@
 package com.challenge.Bank.accounts.mapper;
 
-import com.challenge.Bank.accounts.DTO.AccountRequestDTO;
 import com.challenge.Bank.accounts.DTO.AccountResponseDTO;
 import com.challenge.Bank.accounts.model.Account;
 import com.challenge.Bank.clients.model.Client;
@@ -9,8 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountMapper {
 
-    public Account ToEntity(AccountRequestDTO dto) {
+    public Account ToEntity(Client client) {
         return Account.builder()
+                .client(client)
                 .build();
     }
 

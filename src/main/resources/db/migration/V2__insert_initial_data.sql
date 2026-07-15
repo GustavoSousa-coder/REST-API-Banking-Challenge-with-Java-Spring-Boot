@@ -6,7 +6,7 @@ INSERT INTO tb_accounts (uuid, account_number, agency_number, balance, overdraft
     (UUID_TO_BIN('f47ac10b-58cc-4372-a567-0e02b2c3d479'), '5706', '0001', 375.00, 1.00, 'ACTIVE', 'CORRENTE', UUID_TO_BIN('550e8400-e29b-41d4-a716-446655440000'), '2026-02-10 23:12:59'),
     (UUID_TO_BIN('bc661c56-745a-436d-9781-91f8c6d6786e'), '5707', '0001', 0.00, 1.00, 'ACTIVE', 'POUPANCA', UUID_TO_BIN('a7b3c1d2-e4f5-4a6b-8c9d-0e1f2a3b4c5d'), '2026-02-18 14:34:59');
 
-INSERT INTO tb_address_keys (uuid, key_type, key_value, account_id) VALUES
+INSERT INTO tb_pix_keys (uuid, key_type, key_value, account_id) VALUES
     (UUID_TO_BIN('d290f1ee-6c54-4b01-90e6-d701748f0851'), 'CPF', '02365744165', UUID_TO_BIN('f47ac10b-58cc-4372-a567-0e02b2c3d479')),
     (UUID_TO_BIN('e301a2ff-7d65-4c12-81f7-e812859a1962'), 'CPF', '16483900262', UUID_TO_BIN('bc661c56-745a-436d-9781-91f8c6d6786e'));
 

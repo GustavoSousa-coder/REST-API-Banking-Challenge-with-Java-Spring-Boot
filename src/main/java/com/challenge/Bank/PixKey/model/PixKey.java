@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @EqualsAndHashCode
 @Entity
-@Table(name = "tb_address_keys")
+@Table(name = "tb_pix_keys")
 public class PixKey {
 
     @Id
