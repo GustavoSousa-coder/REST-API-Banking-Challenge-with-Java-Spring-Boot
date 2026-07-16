@@ -1,6 +1,7 @@
 package com.challenge.Bank.card.controller;
 
 import com.challenge.Bank.card.DTO.CardResponseDTO;
+import com.challenge.Bank.card.controller.doc.CardControllerDoc;
 import com.challenge.Bank.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/card")
 @RequiredArgsConstructor
-public class CardController {
+public class CardController implements CardControllerDoc {
 
     private final CardService cardService;
 
+    @Override
     @PostMapping("/{accountId}")
     public ResponseEntity<CardResponseDTO> create(@PathVariable UUID accountId) {
         return ResponseEntity.ok(cardService.create(accountId));

@@ -61,7 +61,6 @@ public class ClientService {
 
         search.setClientStatus(ClientStatus.INACTIVE);
         clientMapper.toDTO(clientRepository.save(search));
-
     }
 
     public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {

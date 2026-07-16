@@ -3,6 +3,7 @@ package com.challenge.Bank.clients.controller;
 import com.challenge.Bank.clients.DTO.AuthenticationRequestDTO;
 import com.challenge.Bank.clients.DTO.AuthenticationResponseDTO;
 import com.challenge.Bank.clients.DTO.ClientResponseDTO;
+import com.challenge.Bank.clients.controller.doc.AuthenticationControllerDoc;
 import com.challenge.Bank.clients.service.AuthenticationService;
 import com.challenge.Bank.clients.service.ClientService;
 import jakarta.validation.Valid;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class AuthenticationController {
+public class AuthenticationController implements AuthenticationControllerDoc {
 
     private final AuthenticationService authenticationService;
 
@@ -24,6 +25,7 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDTO> login(@RequestBody @Valid AuthenticationRequestDTO dto) {
         var result = authenticationService.login(dto);

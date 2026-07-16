@@ -1,6 +1,7 @@
 package com.challenge.Bank.statistics.controller;
 
 import com.challenge.Bank.statistics.DTO.StatisticsResponseDTO;
+import com.challenge.Bank.statistics.controller.doc.StatisticsControllerDoc;
 import com.challenge.Bank.statistics.service.StatisticsService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/estatistica")
-public class StatisticsController {
+public class StatisticsController implements StatisticsControllerDoc {
 
     private final StatisticsService statisticsService;
 
@@ -20,6 +21,7 @@ public class StatisticsController {
         this.statisticsService = statisticsService;
     }
 
+    @Override
     @GetMapping(value = "/{accountId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StatisticsResponseDTO> constructorStatistics(
             @PathVariable UUID accountId,

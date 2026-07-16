@@ -57,6 +57,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/transacao/{accountId}").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.GET, "/api/v1/transacao/{accountId}").hasRole("CLIENT")
                         .requestMatchers(HttpMethod.GET, "/api/v1/transacao/{accountId}/personalise").hasRole("CLIENT")
+
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
