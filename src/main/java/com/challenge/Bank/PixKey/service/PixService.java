@@ -33,9 +33,6 @@ public class PixService {
 
         if (account.getStatus() != AccountStatus.ACTIVE) { throw new UnprocessableEntity("Error relational in account not active"); }
 
-        PixKey getKey = pixKeyRepository.findByKeyValue(pixTransferRequestDTO.keyValue());
-        if (getKey == null) { throw  new NotFound("Address key not found"); }
-
         PixKey key = PixKey.builder()
                 .keyValue(pixTransferRequestDTO.keyValue())
                 .keyType(pixTransferRequestDTO.keyType())
